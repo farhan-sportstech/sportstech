@@ -1,0 +1,146 @@
+/* category dropdown */
+.sel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 190px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sel:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line-strong));
+  }
+}
+
+.sel :global(.ic) {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.26s var(--ease-out);
+}
+
+.sel[aria-expanded="true"] :global(.ic) {
+  transform: rotate(180deg);
+  stroke: var(--accent-ink);
+}
+
+.sel-list {
+  position: fixed;
+  z-index: 9500;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(15, 20, 32, 0.06), 0 16px 36px -8px rgba(15, 20, 32, 0.28);
+  outline: none;
+  transform-origin: top center;
+  animation: wd-pop-in 0.2s var(--ease-out);
+}
+
+.sel-list[data-up] {
+  transform: translateY(-100%);
+  transform-origin: bottom center;
+  animation-name: wd-pop-up;
+}
+
+.sel-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 36px;
+  padding: 0 10px 0 12px;
+  border-radius: 8px;
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.sel-list li.on {
+  background: var(--surface-3);
+  color: var(--ink);
+}
+
+.sel-list li[aria-selected="true"] {
+  color: var(--accent-ink);
+  font-weight: 650;
+}
+
+.sel-list .tick {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sel-list {
+    animation: wd-fade 0.2s ease both !important;
+  }
+}
+
+/* ---------- compact toolbar controls ---------- */
+.sel {
+  height: 38px;
+  padding: 0 12px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  font: inherit;
+  font-size: 14px;
+  transition: border-color 0.12s ease, box-shadow 0.15s ease;
+}
+
+.sel[aria-expanded="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.sel.sm {
+  height: 34px;
+  min-width: 0;
+  padding: 0 10px 0 12px;
+  font-size: 13.5px;
+  border-radius: 8px;
+}
+
+@keyframes wd-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes wd-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}
+
+@keyframes wd-pop-up {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-100% + 4px)) scale(0.97);
+  }
+}

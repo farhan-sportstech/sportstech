@@ -1,0 +1,45 @@
+:global(.wdp) td .rank small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+.rank {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rank sup {
+  margin-left: 1px;
+  color: var(--warn);
+}
+
+:global(.dl) .rk {
+  width: 11px;
+  height: 11px;
+  margin-right: 2px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: -1px;
+}
+
+:global(.dl) .rk.up {
+  transform: rotate(180deg);
+}
+
+:global(.dl):has(.rk) {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+:global(.dl) .rk {
+  display: block;
+  flex: none;
+}

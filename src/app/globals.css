@@ -1,0 +1,650 @@
+@import "tailwindcss";
+
+/* Console design language: cool neutral ground, hairline modules, tabular figures, one blue accent.
+   Red and green are kept for meaning only (adverse / favourable change). */
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #eef1f6;
+  --line: #e2e7ee;
+  --line-2: #edf0f5;
+  --line-strong: #cbd3de;
+  --ink: #0f1420;
+  --ink-2: #3c4657;
+  --ink-3: #5b6678;
+  --accent: #3454f0;
+  --accent-soft: #e9eeff;
+  --accent-ink: #2540cf;
+  --on-accent: #ffffff;
+  --good: #16784a;
+  --good-soft: #e3f3ea;
+  --bad: #c8151e;
+  --bad-soft: #fce9e8;
+  --warn: #8a5d00;
+  --warn-soft: #fbf0d6;
+  --shadow: 0 1px 2px rgba(15, 20, 32, 0.05);
+
+  /* sidebar rail: ink in both themes */
+  --rail: #0e131c;
+  --rail-2: #171e2a;
+  --rail-3: #212a39;
+  --rail-line: #222b3a;
+  --rail-ink: #f2f5fa;
+  --rail-ink-2: #bcc6d4;
+  --rail-ink-3: #8c98aa;
+  --rail-accent: #8ca2ff;
+  --rail-active: rgba(140, 162, 255, 0.16);
+
+  --font: var(--font-ui), "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --font-head: var(--font-display), var(--font-ui), "Segoe UI", system-ui, sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --sb-w: 232px;
+  color-scheme: light dark;
+  accent-color: var(--accent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0d13;
+    --surface: #11161e;
+    --surface-2: #161c25;
+    --surface-3: #1d242f;
+    --line: #232b37;
+    --line-2: #1d242e;
+    --line-strong: #343e4d;
+    --ink: #eef2f8;
+    --ink-2: #c3ccd9;
+    --ink-3: #95a1b3;
+    --accent: #8ca2ff;
+    --accent-soft: #1b2447;
+    --accent-ink: #a9baff;
+    --on-accent: #0a0d13;
+    --good: #46c98c;
+    --good-soft: #0f2e21;
+    --bad: #ff6b5e;
+    --bad-soft: #3a1a17;
+    --warn: #e8bb52;
+    --warn-soft: #332810;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --rail: #080b11;
+    --rail-2: #131923;
+    --rail-3: #1b2330;
+    --rail-line: #1b2330;
+  }
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 14.5px;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-head);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+:is(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- shell ---------- */
+.wd-main {
+  padding: 28px 32px 72px calc(var(--sb-w) + 36px);
+  max-width: calc(1600px + var(--sb-w));
+  transition: padding-left 0.24s var(--ease-out);
+}
+
+body:has(#wd-sb[data-mini="true"]) .wd-main {
+  padding-left: calc(68px + 36px);
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 899px) {
+  .wd-main, body:has(#wd-sb[data-mini="true"]) .wd-main {
+    padding: 76px 16px 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-property: color, background-color, border-color, opacity, box-shadow !important;
+    animation: none !important;
+  }
+}
+
+/* ---------- Weekly Dash page ---------- */
+.wdp {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1500px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 20px 24px;
+}
+
+.panel.flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ph {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ph-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 18px 24px 14px;
+}
+
+.note {
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+
+.dl {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+}
+
+.dl.good {
+  color: var(--good);
+  background: var(--good-soft);
+}
+
+.dl.bad {
+  color: var(--bad);
+  background: var(--bad-soft);
+}
+
+.dl.flat {
+  color: var(--ink-2);
+  background: var(--surface-3);
+}
+
+/* share of the leading category, drawn behind the current-period figure */
+.wdp td.cur {
+  position: relative;
+}
+
+.tscroll {
+  overflow-x: auto;
+  border-top: 1px solid var(--line);
+}
+
+.wdp table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.wdp :is(th, td) {
+  height: 46px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line-2);
+  white-space: nowrap;
+}
+
+.wdp :is(th, td):first-child {
+  padding-left: 24px;
+  text-align: left;
+}
+
+.wdp :is(th, td):last-child {
+  padding-right: 24px;
+}
+
+.wdp thead th {
+  position: sticky;
+  top: 0;
+  height: auto;
+  padding-block: 10px 9px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line-strong);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-align: left;
+}
+
+.wdp thead small {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+.wdp .n {
+  text-align: right;
+}
+
+.wdp tbody th {
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+}
+
+.wdp td.cur, .wdp th.cur {
+  font-weight: 700;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+}
+
+.wdp thead th.cur {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.wdp tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wdp tbody tr:hover > :is(td, th) {
+    background: var(--surface-3);
+  }
+}
+
+.wdp thead th button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.wdp thead th.sorted {
+  color: var(--ink);
+}
+
+.wdp thead th.sorted::after {
+  content: none;
+}
+
+.wdp .arr {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.32s var(--ease-out), background-color 0.15s ease;
+}
+
+.wdp .arr .ic {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wdp th.sorted .arr {
+  opacity: 1;
+  background: var(--accent-soft);
+}
+
+.wdp th.sorted .arr .ic {
+  stroke: var(--accent-ink);
+}
+
+.wdp th[aria-sort="ascending"] .arr {
+  transform: rotate(180deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wdp th.sortable:not(.sorted):hover .arr {
+    opacity: 0.6;
+  }
+}
+
+.wdp tfoot :is(th, td) {
+  border-bottom: 0;
+  border-top: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  font-weight: 700;
+}
+
+.wdp tfoot th {
+  text-align: left;
+}
+
+/* in-page tabs */
+.wdp section, .wdp .stack {
+  scroll-margin-top: 64px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ph-row.between {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ph-row .note {
+  margin-top: 3px;
+}
+
+/* tables that scroll in both directions */
+.tscroll.tall {
+  max-height: 560px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.wdp table.ov th:first-child, .wdp table.pt th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  min-width: 150px;
+}
+
+.wdp table.ov thead th:first-child, .wdp table.pt thead th:first-child {
+  z-index: 3;
+  background: var(--surface-2);
+}
+
+.wdp tbody th small, .wdp tfoot th small {
+  display: block;
+  margin-top: 1px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+.wdp tr.sumrow > :is(th, td) {
+  background: var(--surface-2);
+  font-weight: 700;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.wdp .na {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.wdp td.neg {
+  color: var(--bad);
+}
+
+.wdp td.empty {
+  height: 80px;
+  text-align: center;
+  color: var(--ink-3);
+}
+
+/* products */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filters input {
+  height: 38px;
+  padding: 0 12px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  font: inherit;
+  font-size: 14px;
+  transition: border-color 0.12s ease, box-shadow 0.15s ease;
+}
+.filters input {
+  min-width: 230px;
+}
+
+.filters input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  outline: none;
+}
+
+@media (max-width: 899px) {
+  .panel {
+    padding: 16px;
+  }
+  .ph-row {
+    padding: 16px 16px 12px;
+  }
+  .wdp :is(th, td):first-child {
+    padding-left: 16px;
+  }
+}
+
+/* flex children default to min-width:auto, which lets wide tables and charts push the page sideways */
+.wdp, .wdp > * {
+  min-width: 0;
+}
+
+/* sections below the fold ease in as they arrive */
+.wdp > [data-reveal] {
+  transition: opacity 0.6s ease, transform 0.75s var(--ease-out);
+}
+
+.wdp > [data-reveal="wait"] {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wdp > [data-reveal="wait"] {
+    transform: none;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, transform 0.1s var(--ease-out);
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.btn.sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    color: var(--ink);
+    border-color: color-mix(in srgb, var(--ink-3) 60%, var(--line-strong));
+    background: var(--surface-2);
+  }
+}
+
+/* ---------- section heads: title, info, controls ---------- */
+.ph-t {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ph-row.tools {
+  align-items: center;
+  gap: 10px 12px;
+  padding-top: 0;
+}
+
+.tools-gap {
+  flex: 1;
+}
+
+.count {
+  margin-left: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+
+.tot {
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+
+.tot b {
+  color: var(--ink);
+}
+
+/* ---------- table cells used by the new sections ---------- */
+.wdp td.strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.wdp td.zero {
+  color: var(--bad);
+  font-weight: 600;
+}
+
+.wdp thead th button > span:first-child small {
+  display: block;
+}
+
+.rowlink {
+  color: inherit;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.25s var(--ease-out), color 0.15s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rowlink:hover {
+    color: var(--accent-ink);
+    background-size: 100% 1px;
+  }
+}
+
+/* overview: fixed columns so switching periods never reflows */
+.wdp table.ov {
+  table-layout: fixed;
+  min-width: 1586px;
+}
+
+.wdp table.ov th[title] {
+  cursor: help;
+}
+
+/* data swaps crossfade instead of snapping */
+.swap {
+  animation: wd-fade 0.28s ease both;
+}
+
+/* arrival cue after a tab jump */
+.wdp [data-arrive] {
+  animation: wd-arrive 1.6s ease-out;
+}
+
+.wdp .stack[data-arrive] {
+  border-radius: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wdp [data-arrive] {
+    animation: wd-arrive 1.1s ease-out !important;
+  }
+  .swap {
+    animation: wd-fade 0.18s ease both !important;
+  }
+}
+
+.ph-row.tools {
+  gap: 8px;
+  padding-bottom: 14px;
+}
+
+@keyframes wd-arrive {
+  0%,
+  25% {
+    box-shadow: 0 0 0 2px var(--accent), 0 0 0 7px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 2px transparent, 0 0 0 7px transparent;
+  }
+}
+
+@keyframes wd-fade {
+  from {
+    opacity: 0;
+  }
+}

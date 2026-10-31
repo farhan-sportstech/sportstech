@@ -1,0 +1,24 @@
+.lede {
+  padding: 0 24px 14px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+.lede b {
+  color: var(--ink);
+}
+:global(.wdp) thead tr.grp th {
+  height: auto;
+  padding-block: 10px 0;
+  border-bottom: 0;
+}
+:global(.wdp) thead th.gh {
+  text-align: center;
+  color: var(--ink);
+  font-weight: 700;
+}
+:global(.wdp) :is(td, th).end {
+  border-right: 1px solid var(--line);
+}
+:global(.wdp) :is(td, th).end:last-child {
+  border-right: 0;
+}

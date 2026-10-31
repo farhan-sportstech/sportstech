@@ -1,0 +1,129 @@
+/* tree levels: family (tinted, bold) > product > ASIN (indented, quiet) */
+:global(.wdp) .tree th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 220px;
+  background: var(--surface);
+}
+:global(.wdp) .tree thead th:first-child {
+  z-index: 3;
+  background: var(--surface-2);
+}
+:global(.wdp) .tree tr.fam > :is(th, td) {
+  background: var(--surface-2);
+  font-weight: 700;
+  color: var(--ink);
+}
+:global(.wdp) .tree tr.fam > th,
+:global(.wdp) .tree tr.prod > th {
+  padding: 0;
+}
+:global(.wdp) .tree tr.prod .exp {
+  padding-left: 34px;
+  font-weight: 600;
+}
+:global(.wdp) .tree tr.asin > :is(th, td) {
+  background: color-mix(in srgb, var(--surface-2) 55%, var(--surface));
+  color: var(--ink-2);
+}
+:global(.wdp) .tree tr.asin > th {
+  font-weight: 500;
+}
+.ch {
+  display: block;
+  padding-left: 58px;
+}
+.exp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px 0 16px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.exp :global(.ic) {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: rotate(-90deg);
+  transition: transform 0.25s var(--ease-out);
+}
+.exp[aria-expanded="true"] :global(.ic) {
+  transform: none;
+}
+.exp:disabled {
+  cursor: default;
+}
+.exp:disabled :global(.ic) {
+  opacity: 0.35;
+}
+:global(.wdp) .tree tbody th small {
+  font-weight: 500;
+}
+
+/* trend blocks */
+:global(.wdp) thead tr.grp th {
+  height: auto;
+  padding-block: 10px 0;
+  border-bottom: 0;
+}
+:global(.wdp) thead th.gh {
+  text-align: center;
+  color: var(--ink);
+  font-weight: 700;
+}
+:global(.wdp) thead th.gh small {
+  font-weight: 500;
+  text-transform: none;
+}
+:global(.wdp) :is(td, th).end {
+  border-right: 1px solid var(--line);
+}
+:global(.wdp) :is(td, th).end:last-child {
+  border-right: 0;
+}
+
+/* deal running: a quiet toggle until it is on */
+.deal {
+  min-width: 46px;
+  height: 26px;
+  padding: 0 8px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 7px;
+  background: none;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.deal[aria-pressed="true"] {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--warn) 45%, transparent);
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+@media (hover: hover) and (pointer: fine) {
+  .deal[aria-pressed="false"]:hover {
+    border-color: var(--ink-3);
+    color: var(--ink);
+  }
+}
+.dealN {
+  color: var(--warn);
+  font-size: 12.5px;
+  font-weight: 700;
+}

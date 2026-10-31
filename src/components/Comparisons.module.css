@@ -1,0 +1,32 @@
+.cmp-c small {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+:global(.wdp) table.cmp td, :global(.wdp) table.cmp th {
+  height: 56px;
+}
+
+/* to-date view: three column groups (today, this week, this month) */
+:global(.wdp) thead tr.grp th {
+  height: auto;
+  padding-block: 10px 0;
+  border-bottom: 0;
+}
+:global(.wdp) thead th.gh {
+  text-align: center;
+  color: var(--ink);
+  font-weight: 700;
+}
+:global(.wdp) thead th.gh small {
+  font-weight: 500;
+}
+:global(.wdp) :is(td, th).end {
+  border-right: 1px solid var(--line);
+}
+:global(.wdp) :is(td, th).end:last-child {
+  border-right: 0;
+}

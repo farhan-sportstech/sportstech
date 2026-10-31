@@ -1,0 +1,149 @@
+:global(.wdp) td.cat {
+  color: var(--ink-3);
+}
+
+:global(.wdp) tr.parent > th {
+  padding: 0;
+}
+
+:global(.wdp) .exp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px 0 16px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+:global(.wdp) .exp :global(.ic) {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: rotate(-90deg);
+  transition: transform 0.25s var(--ease-out);
+}
+
+:global(.wdp) .exp[aria-expanded="true"] :global(.ic) {
+  transform: none;
+}
+
+:global(.wdp) tr.child > :is(th, td) {
+  background: var(--surface-2);
+}
+
+:global(.wdp) tr.child th {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+:global(.wdp) .ch {
+  display: block;
+  padding-left: 31px;
+}
+
+/* variant rows: stagger open, fade shut */
+:global(.wdp) tr.child > * {
+  animation: wd-row-in 0.34s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 45ms);
+}
+
+:global(.wdp) tr.child.closing > * {
+  animation: wd-row-out 0.17s ease-in both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.wdp) tr.child > * {
+    animation: wd-fade 0.2s ease both !important;
+  }
+  :global(.wdp) tr.child.closing > * {
+    animation: wd-fade-out 0.12s ease both !important;
+  }
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  border-top: 1px solid var(--line-2);
+}
+
+/* trend view column groups */
+:global(.wdp) thead tr.grp th {
+  padding-block: 8px 0;
+  border-bottom: 0;
+  background: var(--surface-2);
+}
+
+:global(.wdp) thead th.grp-h {
+  text-align: center;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+:global(.wdp) thead th.grp-h::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin: 6px 10px 0;
+  border-radius: 2px;
+  background: var(--line-strong);
+}
+
+:global(.wdp) :is(td, th).grp-end {
+  border-right: 1px solid var(--line);
+}
+
+:global(.wdp) .exp:disabled {
+  cursor: default;
+}
+
+:global(.wdp) .exp:disabled :global(.ic) {
+  opacity: 0.35;
+}
+
+
+
+
+
+
+
+
+
+
+@keyframes wd-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes wd-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes wd-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes wd-row-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}

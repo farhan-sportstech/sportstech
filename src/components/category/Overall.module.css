@@ -1,0 +1,27 @@
+/* own / shared rows read as parts of the total above them */
+:global(.wdp) .oa tr.sub > th {
+  padding-left: 44px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+:global(.wdp) .oa tr.sub > th::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 1px;
+  margin: 0 8px 4px -18px;
+  background: var(--line-strong);
+}
+:global(.wdp) .oa tr.sub > td {
+  color: var(--ink-2);
+}
+:global(.wdp) .oa tr.strong > :is(th, td) {
+  font-weight: 700;
+  color: var(--ink);
+}
+:global(.wdp) .oa tbody tr {
+  height: 42px;
+}
+:global(.wdp) .oa :is(th, td) {
+  height: 42px;
+}

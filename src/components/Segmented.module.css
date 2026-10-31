@@ -1,0 +1,69 @@
+.seg {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 11px;
+}
+
+.seg .thumb {
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  width: var(--w);
+  border-radius: 7px;
+  background: var(--surface-3);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  transform: translateX(var(--x));
+  transition: transform 0.34s var(--ease-out), width 0.34s var(--ease-out);
+}
+
+.seg button {
+  padding: 8px 15px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.1s var(--ease-out);
+}
+
+.seg button:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .seg button[aria-pressed="false"]:hover {
+    color: var(--ink);
+  }
+}
+
+.seg button[aria-pressed="true"] {
+  color: var(--ink);
+}
+
+.seg.sm {
+  padding: 2px;
+  border-radius: 9px;
+}
+
+.seg.sm .thumb {
+  top: 2px;
+  bottom: 2px;
+  border-radius: 7px;
+}
+
+.seg.sm button {
+  padding: 6px 12px;
+  font-size: 13.5px;
+  border-radius: 7px;
+}

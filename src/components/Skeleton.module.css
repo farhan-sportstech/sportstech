@@ -1,0 +1,72 @@
+/* ---------- skeletons ---------- */
+.bone {
+  display: block;
+  background: linear-gradient(90deg, var(--surface-3) 0%, color-mix(in srgb, var(--surface-3) 55%, var(--surface)) 50%, var(--surface-3) 100%);
+  background-size: 200% 100%;
+  border-radius: 5px;
+  animation: wd-shimmer 1.4s ease-in-out infinite;
+}
+
+.sk-panel :global(.ph-row) {
+  padding-block: 20px 16px;
+}
+
+.sk-table {
+  border-top: 1px solid var(--line);
+}
+
+.sk-tr {
+  display: grid;
+  align-items: center;
+  gap: 18px;
+  height: 46px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--line-2);
+}
+
+.sk-th {
+  height: 40px;
+  background: var(--surface-2);
+}
+
+.sk-tabs {
+  display: flex;
+  gap: 28px;
+  padding: 14px 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sk-bars {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  height: 128px;
+  margin-top: 14px;
+}
+
+.skKpi {
+  display: flex;
+  gap: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bone {
+    animation: wd-pulse 1.6s ease-in-out infinite !important;
+    background: var(--surface-3);
+  }
+}
+
+@keyframes wd-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes wd-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}

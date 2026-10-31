@@ -1,0 +1,105 @@
+/* trend columns: zero baseline, current period accented, grow in on mount */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.bars.sm {
+  height: 46px;
+}
+
+.bars.lg {
+  gap: 10px;
+  height: 128px;
+  margin-top: 14px;
+}
+
+.bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  height: 100%;
+}
+
+.bars.sm .bar {
+  width: 9px;
+}
+
+.bars.lg .bar {
+  flex: 1;
+}
+
+.bar .col {
+  position: relative;
+  flex: 1;
+  width: 100%;
+}
+
+.bar .fill {
+  position: absolute;
+  inset: auto 0 0;
+  height: calc(var(--h) * 100%);
+  min-height: 3px;
+  border-radius: 4px 4px 2px 2px;
+  background: color-mix(in srgb, var(--ink-3) 28%, transparent);
+  transform-origin: bottom;
+  animation: wd-grow 0.7s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 55ms + 120ms);
+  transition: background-color 0.15s ease;
+}
+
+.bar.now .fill {
+  background: var(--accent);
+}
+
+.bars.sm .bar .fill {
+  border-radius: 3px 3px 1px 1px;
+}
+
+.bar .bl {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.bar.now .bl {
+  color: var(--accent-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bar:hover .fill {
+    background: color-mix(in srgb, var(--ink-3) 50%, transparent);
+  }
+  .bar.now:hover .fill {
+    background: var(--accent-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar .fill {
+    animation: wd-fade 0.4s ease both !important;
+    animation-delay: 0s !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .bars.lg {
+    gap: 6px;
+    height: 100px;
+  }
+}
+
+@keyframes wd-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes wd-grow {
+  from {
+    transform: scaleY(0);
+  }
+}

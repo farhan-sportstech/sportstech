@@ -1,0 +1,328 @@
+/* ---------- sidebar: ink rail ---------- */
+.sb {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sb-w);
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  background: var(--rail);
+  border-right: 1px solid var(--rail-line);
+  color: var(--rail-ink-2);
+  transition: width 0.24s var(--ease-out);
+}
+
+.sb .hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 18px 12px 14px 20px;
+  white-space: nowrap;
+}
+
+.sb .tx {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.sb .t {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--rail-ink);
+}
+
+.sb .st {
+  font-size: 13px;
+  color: var(--rail-ink-3);
+}
+
+.sb .bd {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 12px 16px;
+  overscroll-behavior: contain;
+  /* no scrollbar: its appearance used to shift the menu sideways */
+  scrollbar-width: none;
+}
+
+.sb .bd::-webkit-scrollbar {
+  display: none;
+}
+
+.sb .h {
+  padding: 22px 10px 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--rail-ink-3);
+  white-space: nowrap;
+}
+
+.sb .it {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 40px;
+  margin: 1px 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--rail-ink-2);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.14s ease, color 0.14s ease, transform 0.12s var(--ease-out);
+}
+
+.sb .it:active {
+  transform: scale(0.97);
+}
+
+.sb :global(.ic) {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--rail-ink-3);
+  transition: color 0.15s ease, transform 0.24s var(--ease-out);
+}
+
+.sb .lb {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sb .it:hover, .tg:hover {
+    background: var(--rail-2);
+    color: var(--rail-ink);
+  }
+  .sb .it:hover > :global(.ic) {
+    color: var(--rail-accent);
+    transform: translateX(2px) scale(1.1);
+  }
+}
+
+.sb :is(.it, .tg):focus-visible {
+  outline: 2px solid var(--rail-accent);
+  outline-offset: -2px;
+}
+
+/* active page: tinted, with a dot that scales in */
+.sb a.it.on {
+  background: var(--rail-active);
+  color: var(--rail-ink);
+  font-weight: 650;
+}
+
+.sb a.it.on > :global(.ic) {
+  color: var(--rail-accent);
+}
+
+.sb a.it.on::after {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rail-accent);
+  animation: wd-pop 0.3s var(--ease-out);
+}
+
+.sb .grp.act {
+  color: var(--rail-ink);
+  font-weight: 600;
+}
+
+.sb .grp.act > :global(.ic) {
+  color: var(--rail-accent);
+}
+
+.sb .cv {
+  display: flex;
+  margin-right: -2px;
+  transition: transform 0.28s var(--ease-out);
+}
+
+.sb .cv :global(.ic) {
+  width: 15px;
+  height: 15px;
+}
+
+.sb .grp[aria-expanded="false"] .cv {
+  transform: rotate(-90deg);
+}
+
+/* groups slide open: grid row 0fr -> 1fr animates height without layout thrash */
+.sb .kids {
+  display: grid;
+  grid-template-rows: 1fr;
+  margin: 2px 0 6px 19px;
+  border-left: 1px solid var(--rail-line);
+  transition: grid-template-rows 0.24s var(--ease-out), opacity 0.18s ease;
+}
+
+.sb .kin {
+  min-height: 0;
+  overflow: hidden;
+  padding-left: 8px;
+}
+
+.sb .kids.shut {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  margin-bottom: 0;
+}
+
+.sb .it.sub {
+  min-height: 36px;
+  font-size: 14px;
+  line-height: 1.3;
+  white-space: normal;
+}
+
+.sb .it.sub :global(.ic) {
+  width: 17px;
+  height: 17px;
+}
+
+.sb .sh {
+  padding: 12px 10px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rail-ink-3);
+  white-space: nowrap;
+}
+
+.tg {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  color: var(--rail-ink-3);
+  cursor: pointer;
+  transition: background-color 0.14s ease, color 0.14s ease;
+}
+
+.tg :global(.ic) {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.24s var(--ease-out);
+}
+
+.hb, .ov {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .sb[data-mini="true"] {
+    width: 68px;
+  }
+  .sb[data-mini="true"] :is(.tx, .lb, .cv, .kids) {
+    display: none;
+  }
+  .sb[data-mini="true"] .hd {
+    justify-content: center;
+    padding-inline: 0;
+  }
+  .sb[data-mini="true"] .h {
+    height: 1px;
+    padding: 0;
+    margin: 12px 14px 8px;
+    background: var(--rail-line);
+    font-size: 0;
+  }
+  .sb[data-mini="true"] .it {
+    justify-content: center;
+    gap: 0;
+    padding-inline: 0;
+  }
+  .sb[data-mini="true"] a.it.on::after {
+    display: none;
+  }
+  .sb[data-mini="true"] .bd {
+    padding-top: 8px;
+  }
+  .sb[data-mini="true"] .tg :global(.ic) {
+    transform: rotate(180deg);
+  }
+}
+
+@media (max-width: 899px) {
+  .sb {
+    width: min(300px, 86vw);
+    transform: translateX(-100%);
+    transition: transform 0.25s var(--ease-out);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  }
+  .sb[data-open="true"] {
+    transform: none;
+  }
+  .tg {
+    display: none;
+  }
+  .hb {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 9001;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .hb :global(.ic) {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+  .ov {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 8999;
+    background: rgba(6, 8, 10, 0.5);
+  }
+}
+
+@keyframes wd-pop {
+  from {
+    transform: scale(0);
+  }
+}

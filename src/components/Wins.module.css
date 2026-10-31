@@ -1,0 +1,14 @@
+:global(.wdp) .nm {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 11.5px;
+  font-weight: 700;
+}

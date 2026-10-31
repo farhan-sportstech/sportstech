@@ -1,0 +1,73 @@
+/* info button and its card */
+.info {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--ink-3);
+  cursor: help;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.info svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.info:hover, .info[aria-expanded="true"] {
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+}
+
+.info-card {
+  position: fixed;
+  z-index: 9600;
+  width: min(420px, calc(100vw - 24px));
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(15, 20, 32, 0.06), 0 18px 40px -10px rgba(15, 20, 32, 0.35);
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.55;
+  transform-origin: top left;
+  animation: wd-pop-in 0.18s var(--ease-out);
+}
+
+.info-card p + p {
+  margin-top: 8px;
+}
+
+.info-card[data-pinned] {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line-strong));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-card {
+    animation: wd-fade 0.18s ease both !important;
+  }
+}
+
+
+@keyframes wd-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes wd-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}

@@ -1,0 +1,72 @@
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  gap: 4px;
+  /* bleeds by the link padding so the first label lines up with the title */
+  margin: -4px -12px 0;
+  padding: 8px 0 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs[data-stuck="true"] {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(1.4) blur(12px);
+  box-shadow: 0 8px 20px -14px rgba(0, 0, 0, 0.5);
+}
+
+.tabs a {
+  position: relative;
+  padding: 8px 12px 12px;
+  border-radius: 8px 8px 0 0;
+  color: var(--ink-3);
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tabs a:not(.on):hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
+  }
+}
+
+.tabs a.on {
+  color: var(--ink);
+}
+
+.tabs a:focus-visible {
+  outline-offset: -2px;
+}
+
+.tabs .ink {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: var(--w, 0);
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  transform: translateX(var(--x, 0));
+  transition: transform 0.36s var(--ease-out), width 0.36s var(--ease-out);
+}
+
+@media (max-width: 899px) {
+  .tabs {
+    margin-inline: -16px;
+    padding-inline: 4px;
+  }
+}
