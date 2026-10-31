@@ -30,6 +30,7 @@ import OrganicRank from "./OrganicRank";
 import NoAdSales from "../NoAdSales";
 import KeywordGaps from "./KeywordGaps";
 import ProductDetail from "./ProductDetail";
+import ReportBuilder from "./ReportBuilder";
 import { categoryNoSales } from "@/lib/ads";
 import KeywordsTargets from "./KeywordsTargets";
 import Matrix from "./Matrix";
@@ -75,6 +76,7 @@ export default function CategoryDash({ slug }: { slug: string }) {
   const [mode, setMode] = useState<Mode>("weekly");
   const [family, setFamily] = useState("");
   const [copied, setCopied] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const page = useRef<HTMLDivElement>(null);
   const summary = useRef<HTMLUListElement>(null);
   useReveal(page);
@@ -156,6 +158,12 @@ export default function CategoryDash({ slug }: { slug: string }) {
           </p>
         </div>
         <div className={d["pg-ctl"]}>
+          <button type="button" className="btn" aria-expanded={reportOpen} aria-controls="report" onClick={() => setReportOpen((o) => !o)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6" />
+            </svg>
+            {reportOpen ? "Close report builder" : "Build report"}
+          </button>
           <Notes />
           <button type="button" className="btn" onClick={exportCsv}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -174,6 +182,8 @@ export default function CategoryDash({ slug }: { slug: string }) {
           />
         </div>
       </header>
+
+      <ReportBuilder key={`rb${family}${mode}`} data={data} family={family} mode={mode} open={reportOpen} />
 
       {data.families.length > 1 ? (
         <div className={st.fams}>
