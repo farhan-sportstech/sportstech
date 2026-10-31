@@ -1,0 +1,101 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px 28px;
+  padding: 2px 24px 18px;
+}
+.ctl {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.cap {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.search {
+  width: 220px;
+  max-width: 100%;
+}
+.miss {
+  color: var(--warn);
+}
+
+/* group header over each metric's five periods */
+:global(.wdp) .sq thead tr.grp th {
+  height: auto;
+  padding-block: 10px 4px;
+  border-bottom: 0;
+}
+:global(.wdp) .sq thead th.gh {
+  text-align: center;
+  color: var(--ink);
+  font-weight: 700;
+}
+/* each metric block opens with a hairline */
+:global(.wdp) .sq :is(th, td).start,
+:global(.wdp) .sq thead th.gh {
+  border-left: 1px solid var(--line-strong);
+}
+
+/* market columns (every brand) on a quiet violet band; ours stay on the plain surface */
+:global(.wdp) .sq td.mkt {
+  background: color-mix(in srgb, #8b7bc4 8%, var(--surface));
+}
+:global(.wdp) .sq td.mkt:global(.cur) {
+  background: color-mix(in srgb, #8b7bc4 14%, var(--surface));
+}
+:global(.wdp) .sq thead th.mkt {
+  background: color-mix(in srgb, #8b7bc4 14%, var(--surface-2));
+}
+
+.q {
+  min-width: 220px;
+  white-space: normal !important;
+}
+.other {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--surface-3);
+  color: var(--ink-3);
+  font-size: 11.5px;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+.rank {
+  width: 108px;
+}
+.rk {
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.rk.top {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--good-soft);
+  color: var(--good);
+}
+/* a share of 10% or more is a strong position: shown in the accent */
+:global(.wdp) .sq td.strong {
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+}

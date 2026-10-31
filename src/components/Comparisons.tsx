@@ -69,28 +69,33 @@ export default function Comparisons({ mode, source, toDate, scope = "Whole accou
       <section id="comparisons" className="panel flush" aria-labelledby="cmp-h">
         {head}
         <div className="tscroll">
-          <table className={st.cmp}>
+          <table className={`${st.cmp} ${st.td}`}>
+            <colgroup>
+              <col className={st.kcol} />
+              {toDate.map((t) => [<col key={`${t.label}v`} />, <col key={`${t.label}l`} />, <col key={`${t.label}c`} className={st.ccol} />])}
+            </colgroup>
             <thead>
               <tr className={st.grp}>
                 <th scope="col" />
                 {toDate.map((t) => (
                   <th key={t.label} scope="colgroup" colSpan={3} className={st.gh}>
-                    {t.label}
-                    <small>{t.sub}</small>
+                    <span className={st.ghL}>{t.label}</span>
+                    <span className={st.ghD}>
+                      {t.sub} <i>vs</i> {t.lySub}
+                    </span>
                   </th>
                 ))}
               </tr>
               <tr>
                 <th scope="col">KPI</th>
                 {toDate.map((t) => [
-                  <th key={`${t.label}v`} scope="col" className="n cur">
+                  <th key={`${t.label}v`} scope="col" className={`n ${st.start}`}>
                     Value
                   </th>,
                   <th key={`${t.label}l`} scope="col" className="n">
                     Last year
-                    <small>{t.lySub}</small>
                   </th>,
-                  <th key={`${t.label}c`} scope="col" className={`n ${st.end}`}>
+                  <th key={`${t.label}c`} scope="col" className="n">
                     Change
                   </th>,
                 ])}
@@ -101,13 +106,13 @@ export default function Comparisons({ mode, source, toDate, scope = "Whole accou
                 <tr key={k.label}>
                   <th scope="row">{k.label}</th>
                   {toDate.map((t) => [
-                    <td key={`${t.label}v`} className="n cur">
+                    <td key={`${t.label}v`} className={`n ${st.start} ${st.val}`}>
                       {k.fmt(k.get(t.cur))}
                     </td>,
-                    <td key={`${t.label}l`} className="n">
+                    <td key={`${t.label}l`} className={`n ${st.ly}`}>
                       {k.fmt(k.get(t.ly))}
                     </td>,
-                    <td key={`${t.label}c`} className={`n ${st.end}`}>
+                    <td key={`${t.label}c`} className="n">
                       {delta(k, k.get(t.cur), k.get(t.ly))}
                     </td>,
                   ])}

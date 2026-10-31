@@ -14,6 +14,8 @@ type Side = "good" | "bad";
 type Line = { key: string; name: string; sub: string; deal?: boolean; prev: number | null; now: number | null; spend: number; spendPct: number; sales: number; salesPct: number };
 
 const pp = (v: number | null) => (v === null ? "no sales" : `${pct2.format(v)}%`);
+const ALL_CATS = "All categories";
+type SortKey = "now" | "change" | "spend" | "sales";
 
 export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
   const data = mode === "weekly" ? weekly : monthly;
@@ -22,7 +24,11 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
   const [picked, setPicked] = useState({ mode, i: 0 });
   const [view, setView] = useState<View>("products");
   const [side, setSide] = useState<Side>("good");
+  const [q, setQ] = useState("");
+  const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 } | null>(null);
+  const [cat, setCat] = useState(ALL_CATS);
   const i = picked.mode === mode ? picked.i : 0;
+  const cats = useMemo(() => [ALL_CATS, ...Array.from(new Set(products.map((p) => p.category)))], []);
 
   const lines = useMemo<Line[]>(() => {
     const tot = sumRows(data.categories.map((c) => c.rows[i]));
@@ -58,11 +64,26 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
     }));
   }, [data, mode, i, view]);
 
-  const good = lines.filter((l) => l.now !== null && l.now < TH);
-  const bad = lines.filter((l) => !(l.now !== null && l.now < TH));
-  // products: biggest improvement first; campaigns and keywords: biggest spend first
-  const order = (a: Line, b: Line) => (view === "products" ? (side === "good" ? 1 : -1) * ((a.now! - a.prev!) - (b.now! - b.prev!)) : b.spend - a.spend);
-  const shown = (side === "good" ? good : bad).slice().sort(order);
+  // search and category narrow both sides, so the Good / Bad counts follow the filters
+  const needle = q.trim().toLowerCase();
+  const kept = lines.filter((l) => (!needle || `${l.name} ${l.sub}`.toLowerCase().includes(needle)) && (view !== "products" || cat === ALL_CATS || l.sub.endsWith(`· ${cat}`)));
+  const good = kept.filter((l) => l.now !== null && l.now < TH);
+  const bad = kept.filter((l) => !(l.now !== null && l.now < TH));
+  // default: products by biggest improvement (Good) or worsening (Bad); campaigns and keywords by spend
+  const val = (l: Line, k: SortKey) => (k === "change" ? (l.now !== null && l.prev !== null ? l.now - l.prev : -Infinity) : k === "now" ? (l.now ?? Infinity) : l[k]);
+  const key: SortKey = sort?.key ?? (view === "products" ? "change" : "spend");
+  const dir = sort?.dir ?? (view === "products" ? (side === "good" ? 1 : -1) : -1);
+  const shown = (side === "good" ? good : bad).slice().sort((a, b) => (val(a, key) - val(b, key)) * dir);
+  const head = (k: SortKey, label: string) => (
+    <th scope="col" className={`n sortable${key === k ? " sorted" : ""}`} aria-sort={key === k ? (dir === -1 ? "descending" : "ascending") : "none"}>
+      <button type="button" onClick={() => setSort({ key: k, dir: key === k ? ((dir * -1) as 1 | -1) : -1 })}>
+        {label}
+        <span className="arr" aria-hidden="true">
+          {key === k ? (dir === -1 ? "↓" : "↑") : ""}
+        </span>
+      </button>
+    </th>
+  );
   const metric = view === "products" ? "TACoS" : "ACOS";
 
   return (
@@ -103,6 +124,11 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
             { value: "bad", label: `Bad · ${bad.length}` },
           ]}
         />
+        <span className="tools-gap" />
+        <div className="filters">
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={view === "products" ? "Search product or ASIN" : view === "campaigns" ? "Search campaign" : "Search keyword"} aria-label="Search" />
+          {view === "products" ? <Select label="Category" value={cat} onChange={setCat} options={cats} /> : null}
+        </div>
       </div>
       <div className="tscroll tall">
         <table className="wins">
@@ -112,21 +138,13 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
               <th scope="col" className="n">
                 {metric} prev
               </th>
-              <th scope="col" className="n">
-                {metric}
-              </th>
-              <th scope="col" className="n">
-                Change
-              </th>
-              <th scope="col" className="n">
-                Ad spend
-              </th>
+              {head("now", metric)}
+              {head("change", "Change")}
+              {head("spend", "Ad spend")}
               <th scope="col" className="n">
                 Spend %
               </th>
-              <th scope="col" className="n">
-                {view === "products" ? "Sales" : "Ad sales"}
-              </th>
+              {head("sales", view === "products" ? "Sales" : "Ad sales")}
               <th scope="col" className="n">
                 Sales %
               </th>
@@ -136,7 +154,7 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
             {shown.length === 0 ? (
               <tr>
                 <td colSpan={8} className="empty">
-                  Nothing on the {side} side this {unit}.
+                  {needle || cat !== ALL_CATS ? "Nothing matches the search or category." : `Nothing on the ${side} side this ${unit}.`}
                 </td>
               </tr>
             ) : null}

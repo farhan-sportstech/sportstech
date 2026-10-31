@@ -24,6 +24,48 @@
 :global(.wdp) thead th.gh small {
   font-weight: 500;
 }
+/* to-date view sized to the panel: fixed layout, KPI column first, change column a touch narrower */
+:global(.wdp) table.td {
+  table-layout: fixed;
+  min-width: 1080px;
+}
+.kcol {
+  width: 150px;
+}
+.ccol {
+  width: 108px;
+}
+:global(.wdp) table.td thead tr.grp th {
+  padding-block: 14px 4px;
+}
+.ghL {
+  display: block;
+  font-size: 14.5px;
+}
+.ghD {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.ghD i {
+  font-style: normal;
+  opacity: 0.7;
+}
+/* each group opens with a hairline instead of a shaded block */
+:global(.wdp) table.td :is(td, th).start,
+:global(.wdp) table.td thead tr.grp th.gh {
+  border-left: 1px solid var(--line-strong);
+}
+:global(.wdp) table.td td.val {
+  font-weight: 700;
+  color: var(--ink);
+}
+:global(.wdp) table.td td.ly {
+  color: var(--ink-3);
+}
 :global(.wdp) :is(td, th).end {
   border-right: 1px solid var(--line);
 }

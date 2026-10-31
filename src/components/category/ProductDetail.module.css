@@ -1,0 +1,30 @@
+/* the detail panel and its four product-scoped sections read as one block */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.vars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  padding: 0 24px 14px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.vars b {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.split {
+  border-left: 1px solid var(--line-strong);
+}
+.foot {
+  padding: 12px 24px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+.foot b {
+  color: var(--ink);
+}

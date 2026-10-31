@@ -1,0 +1,89 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px 28px;
+  padding: 2px 24px 18px;
+}
+.ctl {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.cap {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.search {
+  width: 240px;
+  max-width: 100%;
+}
+.warn {
+  color: var(--bad) !important;
+}
+
+:global(.wdp) .cp thead tr.grp th {
+  padding-block: 10px 4px;
+}
+:global(.wdp) .cp thead tr.grp th[rowspan] {
+  padding-block: 10px 9px;
+  border-bottom: 1px solid var(--line-strong);
+  vertical-align: bottom;
+}
+:global(.wdp) .cp thead tr.grp th:not([rowspan]) {
+  height: auto;
+  border-bottom: 0;
+}
+:global(.wdp) .cp thead th.gh {
+  text-align: center;
+  color: var(--ink);
+  font-weight: 700;
+}
+:global(.wdp) .cp :is(th, td).start,
+:global(.wdp) .cp thead th.gh {
+  border-left: 1px solid var(--line-strong);
+}
+.split {
+  border-left: 1px solid var(--line-strong);
+}
+
+.name {
+  min-width: 260px;
+  white-space: normal !important;
+}
+.name small {
+  display: flex !important;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-top: 3px;
+}
+.tag {
+  padding: 0 6px;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.own {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.shared {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.none {
+  padding: 0 6px;
+  border-radius: 5px;
+  background: var(--bad-soft);
+  color: var(--bad);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+/* spent money and sold nothing: a soft red wash */
+:global(.wdp) .waste > :is(th, td) {
+  background: color-mix(in srgb, var(--bad) 6%, var(--surface));
+}

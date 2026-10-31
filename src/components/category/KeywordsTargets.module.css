@@ -1,0 +1,116 @@
+/* one toolbar: what the period columns show on the left, the filters on the right */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px 28px;
+  padding: 2px 24px 18px;
+}
+.ctl {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.cap {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.search {
+  width: 250px;
+  max-width: 100%;
+}
+
+.h3 {
+  padding: 16px 24px 2px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.sub {
+  padding: 0 24px 12px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+
+/* sub rows (PAT · ASIN, Auto · close match ...) sit under their match type */
+.subrow > th {
+  padding-left: 40px !important;
+  font-weight: 500 !important;
+  color: var(--ink-2) !important;
+}
+.subrow > :is(th, td) {
+  background: var(--surface-2);
+  font-size: 13.5px;
+}
+
+/* totals start here: a hairline separates them from the per-period columns */
+.split {
+  border-left: 1px solid var(--line-strong);
+}
+
+.term {
+  min-width: 220px;
+  white-space: normal !important;
+}
+.match {
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.multi {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* market and SEO columns: a quiet violet band, so they read as a different source */
+.kw .mkt {
+  background: color-mix(in srgb, #8b7bc4 9%, var(--surface));
+}
+.kw thead .mkt {
+  background: color-mix(in srgb, #8b7bc4 16%, var(--surface-2));
+}
+.kw :is(th, td).mkt:nth-last-child(5) {
+  border-left: 1px solid color-mix(in srgb, #8b7bc4 45%, transparent);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  padding: 0 24px 12px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.legend i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.kAd {
+  background: var(--accent-soft);
+  border: 1px solid var(--line-strong);
+}
+.kMkt {
+  background: color-mix(in srgb, #8b7bc4 18%, var(--surface));
+  border: 1px solid color-mix(in srgb, #8b7bc4 55%, transparent);
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+}

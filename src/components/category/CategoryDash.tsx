@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
 import { getCategory, type Mode, type OverallRow } from "@/lib/category";
 import { meta } from "@/lib/mock";
 import { acos, change, eur, eur2, int, pct1, pct2, tacos } from "@/lib/format";
@@ -21,20 +21,42 @@ import Segmented from "../Segmented";
 import d from "../dash.module.css";
 import AdTypes from "./AdTypes";
 import CategoryProducts from "./CategoryProducts";
+import KeywordCoverage from "./KeywordCoverage";
+import SearchQueries from "./SearchQueries";
+import BrandedSplit from "./BrandedSplit";
+import Campaigns from "./Campaigns";
+import Placements from "./Placements";
+import OrganicRank from "./OrganicRank";
+import NoAdSales from "../NoAdSales";
+import KeywordGaps from "./KeywordGaps";
+import ProductDetail from "./ProductDetail";
+import { categoryNoSales } from "@/lib/ads";
+import KeywordsTargets from "./KeywordsTargets";
 import Matrix from "./Matrix";
 import Overall from "./Overall";
 import { organicShare } from "@/lib/metrics";
 import st from "./CategoryDash.module.css";
 
+// four groups in page order: sales, advertising, keywords and search, then one product in detail
 const SECTIONS = [
-  { id: "summary", label: "Summary" },
-  { id: "overview", label: "Overview" },
-  { id: "overall", label: "Overall" },
-  { id: "comparisons", label: "Comparisons" },
-  { id: "products", label: "Products" },
-  { id: "adtype", label: "Ad types" },
-  { id: "price", label: "Price & BSR" },
-  { id: "matrix", label: "Weekly matrix" },
+  { id: "summary", label: "Summary", group: "Sales" },
+  { id: "overview", label: "Overview", group: "Sales" },
+  { id: "overall", label: "Overall", group: "Sales" },
+  { id: "comparisons", label: "Comparisons", group: "Sales" },
+  { id: "products", label: "Products", group: "Sales" },
+  { id: "price", label: "Price & BSR", group: "Sales" },
+  { id: "matrix", label: "Weekly matrix", group: "Sales" },
+  { id: "adtype", label: "Ad types", group: "Advertising" },
+  { id: "campaigns", label: "Campaigns", group: "Advertising" },
+  { id: "placements", label: "Placements", group: "Advertising" },
+  { id: "branded", label: "Branded", group: "Advertising" },
+  { id: "nosales", label: "No ad sales", group: "Advertising" },
+  { id: "keywords", label: "Keywords", group: "Keywords" },
+  { id: "coverage", label: "Coverage", group: "Keywords" },
+  { id: "queries", label: "Search queries", group: "Keywords" },
+  { id: "rank", label: "Organic rank", group: "Keywords" },
+  { id: "kwgaps", label: "Keyword gaps", group: "Keywords" },
+  { id: "detail", label: "Product detail", group: "Product" },
 ];
 
 const pctFmt = (v: number) => `${pct1.format(v)}%`;
@@ -58,6 +80,7 @@ export default function CategoryDash({ slug }: { slug: string }) {
   useReveal(page);
 
   const periods = data.periods[mode];
+  const noSales = useMemo(() => categoryNoSales(data, mode, family), [data, mode, family]);
   const [cur, prev] = periods;
   const totals = data.totals(family, mode);
   const t = totals[0];
@@ -248,7 +271,48 @@ export default function CategoryDash({ slug }: { slug: string }) {
                 AOV cut {eur.format(aov.cut)} · High {aov.high} / Low {aov.low} · last 30 days
               </span>
             </summary>
-            <p>Active = sales or ad spend in the last 30 days. AOV = sales ÷ orders per ASIN; the cut is the median AOV of active ASINs with orders, splitting them into a high and a low half.</p>
+            <div className={st.aovBody}>
+              <table className={st.aovT}>
+                <thead>
+                  <tr>
+                    <th scope="col">Product</th>
+                    {data.families.length > 1 ? <th scope="col">Family</th> : null}
+                    <th scope="col" className="n">
+                      Orders
+                    </th>
+                    <th scope="col" className="n">
+                      Sales
+                    </th>
+                    <th scope="col" className="n">
+                      Ad spend
+                    </th>
+                    <th scope="col" className="n">
+                      AOV
+                    </th>
+                    <th scope="col">Band</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {aov.items.map((x, i) => (
+                    <tr key={x.asin} className={cx(!x.active && st.dim)} style={{ "--i": i } as CSSProperties}>
+                      <th scope="row">
+                        {x.name}
+                        <small>{x.asin}</small>
+                      </th>
+                      {data.families.length > 1 ? <td>{x.family}</td> : null}
+                      <td className="n">{int.format(x.orders)}</td>
+                      <td className="n">{eur.format(x.sales)}</td>
+                      <td className="n">{eur2.format(x.adSpend)}</td>
+                      <td className="n strong">{x.aov === null ? <span className="na">—</span> : eur.format(x.aov)}</td>
+                      <td>{x.active ? <span className={cx(st.band, x.band === "High" ? st.hi : st.lo)}>{x.band}</span> : <span className={cx(st.pill, st.off)}>inactive</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p>
+                Active means sales or ad spend in the last 30 days. AOV is sales ÷ orders per listing. The cut ({eur.format(aov.cut)}) is the median AOV of active listings with orders: at or above it is High, below it is Low.
+              </p>
+            </div>
           </details>
         }
       />
@@ -261,9 +325,22 @@ export default function CategoryDash({ slug }: { slug: string }) {
         toDate={data.toDate(family)}
       />
       <CategoryProducts families={families} periods={periods} mode={mode} plural={def.plural} listings={data.listings(family)} />
-      <AdTypes periods={periods} types={data.adTypes(family, mode)} mode={mode} />
       <PriceBsr key={`pb${family}`} items={data.listings(family)} avg={avg} />
       <Matrix data={data} family={family} mode={mode} />
+      {/* advertising */}
+      <AdTypes periods={periods} types={data.adTypes(family, mode)} mode={mode} />
+      <Campaigns data={data} family={family} mode={mode} periods={periods} />
+      <Placements data={data} family={family} mode={mode} />
+      <BrandedSplit data={data} family={family} mode={mode} periods={periods} />
+      <NoAdSales mode={mode} scope={family || `All ${def.plural}`} source={{ periods, sets: noSales }} />
+      {/* keywords and search */}
+      <KeywordsTargets data={data} family={family} mode={mode} periods={periods} />
+      <KeywordCoverage data={data} family={family} mode={mode} />
+      <SearchQueries data={data} family={family} mode={mode} periods={periods} />
+      <OrganicRank key={`rank${family}`} data={data} family={family} />
+      <KeywordGaps key={`kg${family}`} data={data} family={family} />
+      {/* one product, all of the above */}
+      <ProductDetail key={`pd${family}`} data={data} family={family} mode={mode} periods={periods} />
     </div>
   );
 }

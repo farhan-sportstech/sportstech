@@ -2,6 +2,8 @@
 import { dealPeriods, lastYear, listings, monthly, overview, products, rng, weekly, type Listing, type OvRow, type Period, type Product, type Row } from "./mock";
 
 export type Mode = "weekly" | "monthly";
+// a section shown a second time (inside Product detail): its own anchor ids and a title naming the product
+export type Embed = { uid: string; title: string };
 
 type CatDef = { slug: string; name: string; title: string; plural: string; families: { name: string; models: string[] }[] };
 
@@ -38,8 +40,10 @@ export type CategoryData = {
   overview: (family: string) => Record<"daily" | "weekly" | "monthly", OvRow[]>;
   adTypes: (family: string, mode: Mode) => AdType[];
   listings: (family: string) => Listing[];
-  aov: (family: string) => { active: number; inactive: number; cut: number; high: number; low: number };
+  aov: (family: string) => { active: number; inactive: number; cut: number; high: number; low: number; items: AovItem[] };
 };
+// one listing in the last 30 days: AOV = sales ÷ orders; inactive = no sales and no ad spend
+export type AovItem = { name: string; asin: string; family: string; orders: number; sales: number; adSpend: number; aov: number | null; band: "High" | "Low" | null; active: boolean };
 
 const sumRow = (rows: Row[]): Row => rows.reduce((a, r) => ({ sales: a.sales + r.sales, units: a.units + r.units, adSpend: a.adSpend + r.adSpend, adSales: a.adSales + r.adSales }), { sales: 0, units: 0, adSpend: 0, adSales: 0 });
 const scale = (r: Row, f: number): Row => ({ sales: Math.round(r.sales * f), units: Math.round(r.units * f), adSpend: Math.round(r.adSpend * f * 100) / 100, adSales: Math.round(r.adSales * f * 100) / 100 });
@@ -136,9 +140,25 @@ export function getCategory(slug: string): CategoryData | null {
 
   const aov = (family: string) => {
     const ps = pick(family);
-    const prices = ps.map((p) => p.weekly[0].sales / Math.max(1, p.weekly[0].units)).sort((a, b) => a - b);
+    const famOf = (p: Product) => families.find((f) => f.products.includes(p))?.name ?? "";
+    // last 30 days ≈ the four most recent weeks plus two days
+    const last30 = (p: Product) => sumRow([...p.weekly.slice(0, 4), scale(p.weekly[4], 2 / 7)]);
+    const active = ps.map((p) => {
+      const r30 = last30(p);
+      // AOV follows the listed price (plus the odd multi-unit order); orders follow from it
+      const price = listings.find((l) => l.asin === p.asin)?.price;
+      const aovP = price ? price * (1.01 + ((p.asin.charCodeAt(5) % 7) / 100)) : r30.units ? r30.sales / r30.units : 0;
+      const orders = aovP ? Math.round(r30.sales / aovP) : 0;
+      return { name: p.name, asin: p.asin, family: famOf(p), orders, sales: r30.sales, adSpend: r30.adSpend, aov: orders ? r30.sales / orders : null, band: null as AovItem["band"], active: true };
+    });
+    const prices = active.map((a) => a.aov).filter((v): v is number => v !== null).sort((a, b) => a - b);
     const cut = prices.length ? prices[Math.floor(prices.length / 2)] : 0;
-    return { active: ps.length, inactive: ps.length > 2 ? 1 : 0, cut: Math.round(cut), high: prices.filter((p) => p >= cut).length, low: prices.filter((p) => p < cut).length };
+    active.forEach((a) => (a.band = a.aov === null ? null : a.aov >= cut ? "High" : "Low"));
+    // larger scopes carry one retired listing, as the live data does
+    const inactive: AovItem[] =
+      ps.length > 2 ? [{ name: `${ps[0].name} (previous listing)`, asin: `B0${ps[0].asin.slice(2, 6)}OLD${ps[0].asin.slice(-1)}`, family: famOf(ps[0]), orders: 0, sales: 0, adSpend: 0, aov: null, band: null, active: false }] : [];
+    const items = [...active.sort((a, b) => (b.aov ?? 0) - (a.aov ?? 0)), ...inactive];
+    return { active: active.length, inactive: inactive.length, cut: Math.round(cut), high: active.filter((a) => a.band === "High").length, low: active.filter((a) => a.band === "Low").length, items };
   };
 
   return {

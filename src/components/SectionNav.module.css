@@ -9,14 +9,10 @@
   padding: 8px 0 0;
   background: var(--bg);
   border-bottom: 1px solid var(--line);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
+  /* one line, no scrolling: what does not fit goes into the More menu */
+  flex-wrap: nowrap;
+  white-space: nowrap;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.tabs::-webkit-scrollbar {
-  display: none;
 }
 
 .tabs[data-stuck="true"] {
@@ -62,6 +58,189 @@
   background: var(--accent);
   transform: translateX(var(--x, 0));
   transition: transform 0.36s var(--ease-out), width 0.36s var(--ease-out);
+}
+
+/* ---------- group switch: the same segmented look as the period switch, a hairline after it ---------- */
+.groups {
+  flex: none;
+  align-self: center;
+  display: inline-flex;
+  gap: 2px;
+  margin: 0 12px 6px;
+  padding: 3px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: var(--surface);
+  position: relative;
+}
+.groups::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: -13px;
+  width: 1px;
+  background: var(--line-strong);
+}
+.groups button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease, transform 0.12s var(--ease-out);
+}
+.groups button:active {
+  transform: scale(0.96);
+}
+@media (hover: hover) and (pointer: fine) {
+  .groups button:hover:not([aria-pressed="true"]) {
+    background: var(--surface-3);
+    color: var(--ink);
+  }
+}
+.groups button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--surface);
+}
+
+/* ---------- More ---------- */
+.moreWrap {
+  position: relative;
+  flex: none;
+}
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px 12px;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: none;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+.more svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s var(--ease-out);
+}
+.more[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+@media (hover: hover) and (pointer: fine) {
+  .more:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
+  }
+}
+.more[data-on],
+.more[aria-expanded="true"] {
+  color: var(--ink);
+}
+.moreL {
+  color: var(--ink-3);
+}
+.moreOn {
+  color: var(--ink);
+}
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--surface-3);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 700;
+}
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  padding: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 18px 40px -16px rgba(0, 0, 0, 0.55);
+  transform-origin: top right;
+  animation: pop 0.18s var(--ease-out);
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}
+.menu a {
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .menu a:hover {
+    background: var(--surface-3);
+    color: var(--ink);
+  }
+}
+.menu a.menuOn {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+/* hidden measuring row: same type and padding as the real tabs */
+.measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  gap: 4px;
+  visibility: hidden;
+  pointer-events: none;
+  /* zero-sized and clipped, so it never widens the page; its children keep their natural width */
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.mtab,
+.mmore {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px 12px;
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mmore svg {
+  width: 15px;
+  height: 15px;
 }
 
 @media (max-width: 899px) {

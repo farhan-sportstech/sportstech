@@ -1,0 +1,70 @@
+/* one hue per gap type, shared by the filter chips and the row tags */
+.g1 {
+  --hue: var(--accent);
+}
+.g2 {
+  --hue: #8b7bc4;
+}
+.g3 {
+  --hue: #2f9e8f;
+}
+.g4 {
+  --hue: var(--warn);
+}
+.g5 {
+  --hue: var(--bad);
+}
+
+.kw {
+  min-width: 220px;
+  white-space: normal !important;
+}
+.up {
+  color: var(--good);
+}
+.down {
+  color: var(--bad);
+}
+.rk {
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+.p1 {
+  background: var(--good-soft);
+  color: var(--good);
+}
+.p2 {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.p3 {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+.mt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.tag {
+  padding: 1px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--hue) 16%, var(--surface));
+  color: color-mix(in srgb, var(--hue) 80%, var(--ink));
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+}

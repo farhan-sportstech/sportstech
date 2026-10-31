@@ -1,0 +1,146 @@
+/* one hue per bucket, used for the dot, the cell bar and the stacked split in the header */
+.br {
+  --hue: var(--accent);
+}
+.nb {
+  --hue: #8b7bc4;
+}
+.df {
+  --hue: #2f9e8f;
+}
+.of {
+  --hue: #d08a2c;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend i,
+.bn i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--hue);
+}
+
+.bk {
+  table-layout: fixed;
+  min-width: 1080px;
+}
+:global(.wdp) .bk :is(th, td):first-child {
+  width: 230px;
+}
+:global(.wdp) .bk thead th {
+  padding-block: 12px 10px;
+}
+.ph {
+  display: block;
+  margin-bottom: 8px;
+}
+.ph small {
+  display: inline;
+  margin-left: 6px;
+}
+/* stacked split of the period's spend */
+.stack {
+  display: flex;
+  gap: 2px;
+  height: 6px;
+  border-radius: 4px;
+  overflow: hidden;
+  transform-origin: left center;
+  animation: grow 0.7s var(--ease-out) both;
+}
+.stack i {
+  flex-basis: 0;
+  min-width: 0;
+  background: var(--hue);
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.bn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+:global(.wdp) .bk tbody th {
+  white-space: normal;
+}
+:global(.wdp) .bk tbody th small {
+  padding-left: 17px;
+  line-height: 1.35;
+}
+:global(.wdp) .bk :is(tbody, tfoot) :is(th, td) {
+  height: auto;
+  padding-block: 12px;
+  vertical-align: top;
+}
+
+/* a cell: spend and share on top, the share bar, then the efficiency line */
+.c {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  white-space: normal;
+}
+.top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.top b {
+  font-family: var(--font-head);
+  font-size: 15.5px;
+  font-weight: 700;
+}
+.sh {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.bar {
+  display: block;
+  height: 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+  overflow: hidden;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--hue);
+  transform-origin: left center;
+  transform: scaleX(var(--w, 0));
+  animation: barIn 0.7s var(--ease-out) both;
+}
+@keyframes barIn {
+  from {
+    transform: scaleX(0);
+  }
+}
+.meta {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.meta b {
+  color: var(--ink-2);
+  font-weight: 700;
+}

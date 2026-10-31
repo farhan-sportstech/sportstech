@@ -1,0 +1,151 @@
+/* one hue per placement: dot, share bar and chart line */
+.tos {
+  --hue: var(--accent);
+}
+.pp {
+  --hue: #8b7bc4;
+}
+.ros {
+  --hue: #2f9e8f;
+}
+.off {
+  --hue: #d08a2c;
+}
+
+.cov {
+  padding: 0 24px 14px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+.cov b {
+  color: var(--ink);
+}
+
+.pn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+.pn i,
+.legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--hue);
+}
+.shareCell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 70px;
+}
+.bar {
+  display: block;
+  width: 70px;
+  height: 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+  overflow: hidden;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--hue);
+  transform-origin: left center;
+  transform: scaleX(var(--w, 0));
+  animation: grow 0.7s var(--ease-out) both;
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* ---------- trend ---------- */
+.trend {
+  padding: 16px 24px 18px;
+  border-top: 1px solid var(--line);
+}
+.trendHd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  margin-bottom: 8px;
+}
+.trendHd h3 {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-left: auto;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.grid {
+  stroke: var(--line);
+}
+.axis {
+  font-size: 11px;
+  fill: var(--ink-3);
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+}
+.axisOn {
+  fill: var(--ink);
+  font-weight: 700;
+}
+.sel {
+  stroke: var(--ink-3);
+  stroke-dasharray: 3 4;
+  opacity: 0.6;
+}
+/* lines draw in from left to right */
+.line {
+  fill: none;
+  stroke: var(--hue);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: draw 0.9s var(--ease-out) both;
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+.dot {
+  fill: var(--hue);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+  transition: r 0.2s var(--ease-out);
+}
+.hit {
+  fill: transparent;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hit:hover {
+    fill: color-mix(in srgb, var(--ink) 5%, transparent);
+  }
+}

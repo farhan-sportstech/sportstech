@@ -1,0 +1,326 @@
+.split {
+  border-left: 1px solid var(--line-strong);
+}
+.warnTxt {
+  color: var(--bad) !important;
+}
+
+/* rows tall enough for the chips, with air above and below them */
+:global(.wdp) .cov > tbody > tr:not(.drawer) > :is(th, td) {
+  height: 70px;
+  padding-block: 9px;
+}
+
+.name {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+.flag {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--bad-soft);
+  color: var(--bad);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* a product missing Exact or Phrase keywords: a soft red wash across the row */
+:global(.wdp) .gap > :is(th, td) {
+  background: color-mix(in srgb, var(--bad) 7%, var(--surface));
+}
+
+/* each count is a chip: the number, a bar for its share of the product's spend, the amount.
+   The negative right margin lines its content up with the right-aligned column header. */
+.count {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  width: 108px;
+  margin-right: -10px;
+  padding: 6px 9px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: right;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.2s var(--ease-out), transform 0.16s var(--ease-out);
+}
+.top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  line-height: 1;
+}
+.top b {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+}
+/* the arrow only shows when the chip can be opened (hover) or is open; it sits at the chip's left
+   edge, out of the flow, so the number stays flush with the column header */
+.chev {
+  position: absolute;
+  left: -2px;
+  top: 50%;
+  margin-top: -6.5px;
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--ink-3);
+  opacity: 0;
+  transform: translateX(3px);
+  transition: opacity 0.16s ease, transform 0.22s var(--ease-out);
+}
+/* the track is visible, so a short bar reads as "small share", not as a stray dash */
+.track {
+  display: block;
+  height: 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ink) 11%, transparent);
+  overflow: hidden;
+}
+.track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--accent) 60%, transparent);
+  transform-origin: left center;
+  transform: scaleX(var(--w, 0));
+  animation: grow 0.7s var(--ease-out) both;
+  transition: transform 0.4s var(--ease-out), background-color 0.16s ease;
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+.amt {
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.count:active {
+  transform: scale(0.96);
+}
+@media (hover: hover) and (pointer: fine) {
+  .count:hover {
+    background: var(--surface);
+    border-color: var(--line-strong);
+    box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.55);
+    transform: translateY(-1px);
+  }
+  .count:hover .chev {
+    opacity: 1;
+    transform: none;
+  }
+  .count:hover .track i {
+    background: var(--accent);
+  }
+}
+.count.on {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.count.on .top b,
+.count.on .chev {
+  color: var(--accent-ink);
+}
+.count.on .chev {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+.count.on .track i {
+  background: var(--accent);
+}
+.count:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.none {
+  color: var(--ink-3);
+}
+/* a product without Exact or Phrase: said in words, not just a red 0 */
+.missing {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px dashed color-mix(in srgb, var(--bad) 55%, transparent);
+  border-radius: 8px;
+  color: var(--bad);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.openRow > :is(th, td) {
+  border-bottom-color: transparent;
+}
+
+/* ---------- the keyword list that opens under a row ---------- */
+:global(.wdp) .drawer > td {
+  height: auto;
+  padding: 0;
+  background: var(--surface-2);
+  white-space: normal;
+}
+.drawIn {
+  padding: 6px 24px 20px;
+  animation: drawIn 0.34s var(--ease-out) both;
+}
+@keyframes drawIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.card {
+  max-width: 1040px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 10px 28px -20px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+.cardHd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 12px 12px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.cardT {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  min-width: 0;
+}
+.cardT > b {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.stats em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--ink);
+}
+.close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: background-color 0.14s ease, color 0.14s ease, transform 0.12s var(--ease-out);
+}
+.close svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.close:active {
+  transform: scale(0.92);
+}
+@media (hover: hover) and (pointer: fine) {
+  .close:hover {
+    background: var(--surface-3);
+    color: var(--ink);
+  }
+}
+
+.mini {
+  width: 100% !important;
+}
+/* the keyword list sits inside a row: its header must not stick to the outer table's scroll area */
+:global(.wdp) .mini thead {
+  position: static;
+}
+:global(.wdp) .mini thead th {
+  padding-block: 8px 7px;
+  background: var(--surface-2);
+  font-size: 12.5px;
+}
+:global(.wdp) .mini :is(th, td) {
+  height: 50px;
+  font-size: 13.5px;
+}
+:global(.wdp) .mini :is(th, td):first-child {
+  padding-left: 18px;
+}
+:global(.wdp) .mini :is(th, td):last-child {
+  padding-right: 18px;
+}
+:global(.wdp) .mini tbody tr:last-child > :is(th, td) {
+  border-bottom: 0;
+}
+.mini tbody tr {
+  animation: drawIn 0.32s var(--ease-out) both;
+}
+.kw {
+  display: block;
+  font-weight: 600;
+}
+/* each keyword's share of the group's spend, under its name */
+.share {
+  display: block;
+  width: 120px;
+  height: 3px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
+  overflow: hidden;
+}
+.share i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transform-origin: left center;
+  transform: scaleX(var(--w, 0));
+  animation: grow 0.7s var(--ease-out) 0.1s both;
+}
+.camp {
+  color: var(--ink-3);
+}
+.pctOf {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.acos {
+  font-weight: 700;
+}
+.acos.good {
+  color: var(--good);
+}
+.acos.bad {
+  color: var(--bad);
+}

@@ -84,12 +84,70 @@
 .aov[open] summary::before {
   transform: rotate(45deg);
 }
-.aov p {
+/* open and close glide: the content box animates to its natural height (falls back to an instant toggle) */
+.aov::details-content {
+  block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: block-size 0.32s var(--ease-out), opacity 0.22s ease, content-visibility 0.32s allow-discrete;
+}
+.aov[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+.aov {
+  interpolate-size: allow-keywords;
+}
+.aovBody {
   padding: 0 24px 16px 43px;
+}
+.aovBody p {
+  margin-top: 12px;
   max-width: 80ch;
   font-size: 13.5px;
   line-height: 1.55;
   color: var(--ink-3);
+}
+.aovT {
+  width: auto !important;
+  min-width: min(720px, 100%);
+}
+:global(.wdp) .aovT thead {
+  position: static;
+}
+:global(.wdp) .aovT :is(th, td) {
+  height: 44px;
+}
+:global(.wdp) .aovT :is(th, td):first-child {
+  padding-left: 12px;
+}
+/* rows arrive one after another when the fold opens */
+.aov[open] .aovT tbody tr {
+  animation: aovIn 0.4s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 80ms);
+}
+@keyframes aovIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.dim > :is(th, td) {
+  color: var(--ink-3) !important;
+}
+.band {
+  padding: 1px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.hi {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.lo {
+  background: var(--surface-3);
+  color: var(--ink-2);
 }
 .pill {
   padding: 1px 8px;

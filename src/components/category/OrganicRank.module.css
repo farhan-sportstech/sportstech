@@ -1,0 +1,78 @@
+/* page colours: page 1 good, page 2 caution, page 3+ poor */
+.p1 {
+  --c: var(--good);
+  --tint: var(--good-soft);
+}
+.p2 {
+  --c: var(--warn);
+  --tint: var(--warn-soft);
+}
+.p3 {
+  --c: var(--bad);
+  --tint: var(--bad-soft);
+}
+.goodTxt {
+  color: var(--good) !important;
+}
+
+.legend {
+  display: flex;
+  gap: 4px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--c);
+}
+
+:global(.wdp) .rk tbody th {
+  font-weight: 600;
+}
+.chip {
+  display: inline-block;
+  min-width: 46px;
+  padding: 2px 8px;
+  border-radius: 7px;
+  background: var(--tint);
+  color: var(--c);
+  font-weight: 700;
+  text-align: center;
+}
+.nt {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--ink-3);
+}
+.d {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 700;
+}
+.d svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.up {
+  color: var(--good);
+}
+.down {
+  color: var(--bad);
+}
+.flat {
+  color: var(--ink-3);
+}
