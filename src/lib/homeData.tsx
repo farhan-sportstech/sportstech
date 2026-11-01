@@ -16,8 +16,10 @@ export function HomeDataProvider({ data, children }: { data: HomeData; children:
 }
 
 /** Marks a section (or a view of it, with `when`) that still shows sample figures on an otherwise live page. */
-export function SampleTag({ when = true, reason }: { when?: boolean; reason?: string }) {
-  const { live } = useHomeData();
+export function SampleTag({ when = true, reason, live: pageLive }: { when?: boolean; reason?: string; live?: boolean }) {
+  // category pages say themselves whether they are live; the Weekly Dash takes it from its provider
+  const home = useHomeData();
+  const live = pageLive ?? home.live;
   return live && when ? (
     <span className="sample-tag" title={reason ?? "This section isn't connected to the database yet; its figures are invented."}>
       Sample data{reason ? ` · ${reason}` : ""}

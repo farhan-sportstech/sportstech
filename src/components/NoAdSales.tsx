@@ -17,7 +17,7 @@ const MIN = ["Any spend", "€5+ spend", "€20+ spend", "€50+ spend"];
 const minOf = (s: string) => Number(s.replace(/\D/g, "")) || 0;
 
 /** Whole account by default; category pages pass their own periods and sets. */
-export default function NoAdSales({ mode, source, scope }: { mode: "weekly" | "monthly"; source?: { periods: Period[]; sets: NoSaleSet[] }; scope?: string }) {
+export default function NoAdSales({ mode, source, scope, sample }: { mode: "weekly" | "monthly"; source?: { periods: Period[]; sets: NoSaleSet[] }; scope?: string; sample?: string }) {
   // the whole-account page uses the database's weeks when it has them (no monthly lists yet)
   const home = useHomeData();
   const liveNos = !source && mode === "weekly" ? home.nos : null;
@@ -57,7 +57,7 @@ export default function NoAdSales({ mode, source, scope }: { mode: "weekly" | "m
           <h2 id="ns-h" className="ph">
             Ad spend with no ad sales
           </h2>
-          <SampleTag when={!source && !liveNos} reason={home.nos ? "monthly lists aren't stored" : undefined} />
+          <SampleTag live={sample ? true : undefined} when={Boolean(sample) || (!source && !liveNos)} reason={sample ?? (home.nos ? "monthly lists aren't stored" : undefined)} />
           <Info label="Ad spend with no ad sales">
             <p>
               {scope ? `${scope}: ad` : "Ad"} spend above €0 with €0 tool4seller ad sales in the selected {unit}.

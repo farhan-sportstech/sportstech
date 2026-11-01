@@ -194,6 +194,15 @@ One view per page area, current generation only, dates included, presentation co
 - **"Data as of"** = `finished_at` of the last `sb/load.py` run with status ok. Nothing is presented as verified while `verify_ok` is null.
 - **Search terms** say "top 6.000 by spend"; the cap is ours (`hub_fetch.py`) and can be raised.
 
+## 7b. Found while connecting pages
+
+- **Home ad sales:** for slug `home`, `category_metrics.ad_sales` and `asin_metrics.ad_sales` are empty; the attributed ad sales are in `ad_sales_halo` (the stored `acos` matches it). Category slugs use `ad_sales`. One column for both would be cleaner.
+- **`adtype_period`:** rows exist only for cross-trainers, exercise-bikes and vibration-plates, and every figure in them is null. The By ad type section stays sample until it is filled.
+- **Families:** `product_family` holds one family per parent ASIN, and some names repeat (two "sWalk", two "sProRun"); the app adds the ASIN to tell them apart. `asin_metrics` stores family totals as rows with `asin = fam_…`.
+- **Per-period last year:** `yoy_comparison` covers Today / This week / This month only, not each of the 5 weeks / months, and has no rows for `home`.
+- **SB per category:** `page_period_totals` SB columns are null for category slugs, so SB spend isn't split per category.
+- **Wins line:** the old dashboard's campaign / keyword Wins used a 12% ACOS line (`xwn_meta`); the app uses 15% for everything until decided.
+
 ## 8. Status
 
 Done in the app:

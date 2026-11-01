@@ -5,6 +5,7 @@ import type { CategoryData } from "@/lib/category";
 import { RANK_DATES, productRanks } from "@/lib/ranks";
 import { int } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import Select from "../Select";
 import st from "./OrganicRank.module.css";
@@ -44,6 +45,7 @@ export default function OrganicRank({ data, family }: { data: CategoryData; fami
           <h2 id="rk-h" className="ph">
             Organic rank
           </h2>
+          <SampleTag live={data.live} reason="not connected to the database yet" />
           <Info label="Organic rank">
             <p>Organic position per tracked query on amazon.de, one reading per week (Tuesdays): Helium 10 Keyword Tracker where it tracks the product, otherwise Agent Central rank (top 60).</p>
             <p>Green is page 1 (top 20), amber page 2 (21–40), red page 3 or worse. “Not in top 60” means the query is tracked for this product but it was not found that week. The change compares the first and last reading; up means a better position.</p>

@@ -6,6 +6,7 @@ import type { CategoryData, Embed, Mode } from "@/lib/category";
 import { MATCH_TYPES, categoryAds, scopeRows, total, addCell, zero, type Cell, type KwRow } from "@/lib/ads";
 import { eur, eur2, int, pct1, pct2 } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import Segmented from "../Segmented";
 import Select from "../Select";
@@ -108,6 +109,7 @@ export default function KeywordsTargets({ data, family, mode, periods, embed }: 
           <h2 id={`${uid}kw-h`} className="ph">
             {embed?.title ?? "Keywords & targets"}
           </h2>
+          <SampleTag live={data.live} reason="not connected to the database yet" />
           <Info label="Keywords & targets">
             <p>Every bidded keyword and target in own campaigns, one row per keyword and match type, five {unit}s side by side.</p>
             <p>On the right: Helium 10 search volume (30 days) and Amazon Search Query Performance for the same query: weekly searches, this category&apos;s share of clicks and purchases, and the best organic rank among the products in scope.</p>

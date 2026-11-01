@@ -5,6 +5,7 @@ import type { CategoryData, Mode } from "@/lib/category";
 import { categoryAds, scopeRows, total, type Cell, type KwRow, type MatchType } from "@/lib/ads";
 import { eur, eur2, int, pct1 } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import Switch from "../Switch";
 import st from "./KeywordCoverage.module.css";
@@ -145,6 +146,7 @@ export default function KeywordCoverage({ data, family, mode }: { data: Category
           <h2 id="kc-h" className="ph">
             Keyword coverage by match type
           </h2>
+          <SampleTag live={data.live} reason="not connected to the database yet" />
           <Info label="Keyword coverage">
             <p>Enabled keywords and targets in own campaigns over the last 5 {unit}s; targets in paused or archived campaigns are left out. Each count shows its 5-{unit} spend underneath.</p>
             <p>A campaign belongs to a product when the campaign map or its name says so. Campaigns covering several products are grouped as multi-product.</p>

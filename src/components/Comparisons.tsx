@@ -35,7 +35,7 @@ function accountSource(mode: "weekly" | "monthly"): Source {
 
 /** Selected period against four baselines (ratios in points, totals in percent).
  *  With `toDate` (category pages) the picker also offers today / this week / this month against last year. */
-export default function Comparisons({ mode, source, toDate, scope = "Whole account" }: { mode: "weekly" | "monthly"; source?: Source; toDate?: ToDate[]; scope?: string }) {
+export default function Comparisons({ mode, source, toDate, scope = "Whole account", sample }: { mode: "weekly" | "monthly"; source?: Source; toDate?: ToDate[]; scope?: string; sample?: string }) {
   const { periods, totals, ly, deals } = source ?? accountSource(mode);
   const labelOf = (i: number) => `${periods[i].kw} · ${periods[i].label}${deals[i] ? " · Prime Day" : ""}`;
   const options = [...(toDate ? [TO_DATE] : []), ...periods.slice(0, -1).map((_, i) => labelOf(i))];
@@ -51,7 +51,7 @@ export default function Comparisons({ mode, source, toDate, scope = "Whole accou
         <h2 id="cmp-h" className="ph">
           Comparisons
         </h2>
-        <SampleTag reason="no last-year figures in the database yet" />
+        <SampleTag live={sample ? true : undefined} reason={sample ?? "no last-year figures in the database yet"} />
         <Info label="Comparisons">
           <p>
             {scope}: the selected {unit} against the one before, the average of the 4 before that, the last {unit} of the same type, and the same {unit} last year. Green is better, red is worse; ad spend is not coloured.

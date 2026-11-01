@@ -5,6 +5,7 @@ import type { CategoryData } from "@/lib/category";
 import { GAPS, productGaps, type Gap, type GapRow } from "@/lib/kwgaps";
 import { eur2, int } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import Select from "../Select";
 import st from "./KeywordGaps.module.css";
@@ -69,6 +70,7 @@ export default function KeywordGaps({ data, family }: { data: CategoryData; fami
           <h2 id="kg-h" className="ph">
             Keyword gaps per product
           </h2>
+          <SampleTag live={data.live} reason="not connected to the database yet" />
           <Info label="Keyword gaps">
             <p>Every keyword a product is shown for (Helium 10 Cerebro and the SQP ASIN view) against what its own campaigns target today.</p>
             <p>

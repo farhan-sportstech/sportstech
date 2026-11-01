@@ -1,5 +1,6 @@
 // Category pages: one data shape for every category, derived from the mock products until Supabase serves it.
 import { dealPeriods, lastYear, listings, monthly, overview, products, rng, weekly, type Listing, type OvRow, type Period, type Product, type Row } from "./mock";
+import type { CatRaw } from "./data/category";
 
 export type Mode = "weekly" | "monthly";
 // a section shown a second time (inside Product detail): its own anchor ids and a title naming the product
@@ -28,6 +29,9 @@ export type ToDate = { label: string; sub: string; lySub: string; cur: Row; ly: 
 
 export type CategoryData = {
   def: CatDef;
+  /** true when built from Supabase; `real` says which parts are real (the rest is still sample) */
+  live: boolean;
+  real: { adTypes: boolean; perPeriodLastYear: boolean; keywords: boolean };
   products: Product[];
   pick: (scope: string) => Product[];
   families: Family[];
@@ -45,12 +49,81 @@ export type CategoryData = {
 // one listing in the last 30 days: AOV = sales ÷ orders; inactive = no sales and no ad spend
 export type AovItem = { name: string; asin: string; family: string; orders: number; sales: number; adSpend: number; aov: number | null; band: "High" | "Low" | null; active: boolean };
 
+/** Active and inactive listings over the last 30 days with their AOV band. `retired` adds the sample's one old listing. */
+function aovOf(ps: Product[], families: Family[], priceOf: (asin: string) => number | undefined, retired = false) {
+  const famOf = (p: Product) => families.find((f) => f.products.some((x) => x.asin === p.asin))?.name ?? "";
+  // last 30 days ≈ the four most recent weeks plus two days
+  const last30 = (p: Product) => sumRow([...p.weekly.slice(0, 4), scale(p.weekly[4], 2 / 7)]);
+  const items: AovItem[] = ps.map((p) => {
+    const r30 = last30(p);
+    const real = (p.weekly[0] as Row & { orders?: number }).orders !== undefined;
+    // live rows carry real orders; sample orders follow from the listed price (plus the odd multi-unit order)
+    const orders = real
+      ? p.weekly.slice(0, 4).reduce((a, r) => a + ((r as Row & { orders?: number }).orders ?? 0), 0) + Math.round((((p.weekly[4] as Row & { orders?: number }).orders ?? 0) * 2) / 7)
+      : (() => {
+          const price = priceOf(p.asin);
+          const aovP = price ? price * (1.01 + (p.asin.charCodeAt(5) % 7) / 100) : r30.units ? r30.sales / r30.units : 0;
+          return aovP ? Math.round(r30.sales / aovP) : 0;
+        })();
+    const active = r30.sales > 0 || r30.adSpend > 0;
+    return { name: p.name, asin: p.asin, family: famOf(p), orders, sales: r30.sales, adSpend: r30.adSpend, aov: orders ? r30.sales / orders : null, band: null, active };
+  });
+  const act = items.filter((a) => a.active);
+  const prices = act.map((a) => a.aov).filter((v): v is number => v !== null).sort((a, b) => a - b);
+  const cut = prices.length ? prices[Math.floor(prices.length / 2)] : 0;
+  act.forEach((a) => (a.band = a.aov === null ? null : a.aov >= cut ? "High" : "Low"));
+  const inactive = items.filter((a) => !a.active);
+  if (retired && ps.length > 2) inactive.push({ name: `${ps[0].name} (previous listing)`, asin: `B0${ps[0].asin.slice(2, 6)}OLD${ps[0].asin.slice(-1)}`, family: famOf(ps[0]), orders: 0, sales: 0, adSpend: 0, aov: null, band: null, active: false });
+  return { active: act.length, inactive: inactive.length, cut: Math.round(cut), high: act.filter((a) => a.band === "High").length, low: act.filter((a) => a.band === "Low").length, items: [...act.sort((a, b) => (b.aov ?? 0) - (a.aov ?? 0)), ...inactive] };
+}
+
 const sumRow = (rows: Row[]): Row => rows.reduce((a, r) => ({ sales: a.sales + r.sales, units: a.units + r.units, adSpend: a.adSpend + r.adSpend, adSales: a.adSales + r.adSales }), { sales: 0, units: 0, adSpend: 0, adSales: 0 });
 const scale = (r: Row, f: number): Row => ({ sales: Math.round(r.sales * f), units: Math.round(r.units * f), adSpend: Math.round(r.adSpend * f * 100) / 100, adSales: Math.round(r.adSales * f * 100) / 100 });
 
-export function getCategory(slug: string): CategoryData | null {
+/** Builds the category's data: from `raw` (Supabase, via lib/data/category) where given, sample otherwise. */
+export function getCategory(slug: string, raw?: CatRaw | null): CategoryData | null {
   const def = CATEGORY_DEFS.find((c) => c.slug === slug);
   if (!def) return null;
+  const sample = buildSample(def);
+  if (!raw) return sample;
+
+  const all = raw.products.map((p) => ({ ...p, category: def.name }));
+  const families: Family[] = raw.families.map((f) => ({ name: f.name, products: all.filter((p) => f.asins.includes(p.asin)) }));
+  const pick = (scope: string) => (scope.startsWith("asin:") ? all.filter((p) => p.asin === scope.slice(5)) : scope ? (families.find((f) => f.name === scope)?.products ?? []) : all);
+  // one product's own figures: its family's stored rows when it is the family's only product, else the product rows summed
+  const familyOf = (asin: string) => families.find((f) => f.products.some((p) => p.asin === asin));
+  const scopeKey = (scope: string) => (scope.startsWith("asin:") ? (familyOf(scope.slice(5))?.name ?? "") : scope);
+  const fromProducts = (scope: string, mode: Mode): OverallRow[] =>
+    raw.periods[mode].map((_, i) => {
+      const xs = pick(scope).map((p) => p[mode][i] as Row & Partial<OverallRow>);
+      const add = (f: keyof OverallRow) => xs.reduce((a, x) => a + ((x[f] as number | undefined) ?? 0), 0);
+      return { sales: add("sales"), units: add("units"), adSpend: add("adSpend"), adSales: add("adSales"), orders: add("orders"), sessions: add("sessions"), ownSpend: add("ownSpend"), sharedSpend: add("sharedSpend"), sbSpend: 0 };
+    });
+  const totals = (scope: string, mode: Mode) => (scope.startsWith("asin:") && (familyOf(scope.slice(5))?.products.length ?? 0) > 1 ? fromProducts(scope, mode) : (raw.totals[scopeKey(scope)]?.[mode] ?? fromProducts(scope, mode)));
+
+  return {
+    ...sample,
+    live: true,
+    real: { adTypes: Boolean(raw.adTypes), perPeriodLastYear: false, keywords: false },
+    products: all,
+    pick,
+    families,
+    periods: raw.periods,
+    totals,
+    deals: { weekly: raw.periods.weekly.map(() => false), monthly: raw.periods.monthly.map(() => false) },
+    toDate: (scope) => raw.toDate[scopeKey(scope)] ?? raw.toDate[""] ?? sample.toDate(""),
+    overview: (scope) => raw.overview[scopeKey(scope)] ?? raw.overview[""] ?? sample.overview(""),
+    // the ad-type report is stored for the whole category only
+    adTypes: (scope, mode) => (raw.adTypes && !scope ? raw.adTypes[mode] : sample.adTypes(scope, mode)),
+    listings: (scope) => {
+      const asins = new Set(pick(scope).map((p) => p.asin));
+      return raw.listings.filter((l) => asins.has(l.parent ?? l.asin)).map((l) => ({ ...l, category: def.name }));
+    },
+    aov: (scope) => aovOf(pick(scope), families, (asin) => raw.listings.find((l) => l.parent === asin || l.asin === asin)?.price),
+  };
+}
+
+function buildSample(def: CatDef): CategoryData {
   const all = products.filter((p) => p.category === def.name);
   const families: Family[] = def.families.map((f) => ({ name: f.name, products: all.filter((p) => f.models.includes(p.name)) }));
   const seed = def.slug.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
@@ -138,31 +211,12 @@ export function getCategory(slug: string): CategoryData | null {
     return listings.filter((l) => names.has(l.asin));
   };
 
-  const aov = (family: string) => {
-    const ps = pick(family);
-    const famOf = (p: Product) => families.find((f) => f.products.includes(p))?.name ?? "";
-    // last 30 days ≈ the four most recent weeks plus two days
-    const last30 = (p: Product) => sumRow([...p.weekly.slice(0, 4), scale(p.weekly[4], 2 / 7)]);
-    const active = ps.map((p) => {
-      const r30 = last30(p);
-      // AOV follows the listed price (plus the odd multi-unit order); orders follow from it
-      const price = listings.find((l) => l.asin === p.asin)?.price;
-      const aovP = price ? price * (1.01 + ((p.asin.charCodeAt(5) % 7) / 100)) : r30.units ? r30.sales / r30.units : 0;
-      const orders = aovP ? Math.round(r30.sales / aovP) : 0;
-      return { name: p.name, asin: p.asin, family: famOf(p), orders, sales: r30.sales, adSpend: r30.adSpend, aov: orders ? r30.sales / orders : null, band: null as AovItem["band"], active: true };
-    });
-    const prices = active.map((a) => a.aov).filter((v): v is number => v !== null).sort((a, b) => a - b);
-    const cut = prices.length ? prices[Math.floor(prices.length / 2)] : 0;
-    active.forEach((a) => (a.band = a.aov === null ? null : a.aov >= cut ? "High" : "Low"));
-    // larger scopes carry one retired listing, as the live data does
-    const inactive: AovItem[] =
-      ps.length > 2 ? [{ name: `${ps[0].name} (previous listing)`, asin: `B0${ps[0].asin.slice(2, 6)}OLD${ps[0].asin.slice(-1)}`, family: famOf(ps[0]), orders: 0, sales: 0, adSpend: 0, aov: null, band: null, active: false }] : [];
-    const items = [...active.sort((a, b) => (b.aov ?? 0) - (a.aov ?? 0)), ...inactive];
-    return { active: active.length, inactive: inactive.length, cut: Math.round(cut), high: active.filter((a) => a.band === "High").length, low: active.filter((a) => a.band === "Low").length, items };
-  };
+  const aov = (family: string) => aovOf(pick(family), families, (asin) => listings.find((l) => l.asin === asin)?.price, true);
 
   return {
     def,
+    live: false,
+    real: { adTypes: false, perPeriodLastYear: false, keywords: false },
     products: all,
     pick,
     families,

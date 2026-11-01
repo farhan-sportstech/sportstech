@@ -6,6 +6,7 @@ import type { CategoryData, Embed, Mode } from "@/lib/category";
 import { categoryCampaigns, total, zero, addCell, type Cell } from "@/lib/ads";
 import { eur, eur2, int, pct1, pct2 } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import MultiSelect from "../MultiSelect";
 import Select from "../Select";
@@ -76,6 +77,7 @@ export default function Campaigns({ data, family, mode, periods, embed }: { data
           <h2 id={`${uid}cp-h`} className="ph">
             {embed?.title ?? "Campaigns"}
           </h2>
+          <SampleTag live={data.live} reason="not connected to the database yet" />
           <Info label="Campaigns">
             <p>Every campaign that advertised a product in this category, from the Sponsored Products advertised-product report, so the figures count only spend and sales attributable to these ASINs.</p>
             <p>

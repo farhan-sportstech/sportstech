@@ -6,6 +6,7 @@ import type { CategoryData, Mode } from "@/lib/category";
 import { categorySqp, sqpScope, type SqpCell } from "@/lib/sqp";
 import { int, pct1, pct2 } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import MultiSelect from "../MultiSelect";
 import Segmented from "../Segmented";
@@ -73,6 +74,7 @@ export default function SearchQueries({ data, family, mode, periods }: { data: C
           <h2 id="sq-h" className="ph">
             Search queries · market view
           </h2>
+          <SampleTag live={data.live} reason="not connected to the database yet" />
           <Info label="Search queries">
             <p>Amazon Brand Analytics, Search Query Performance: what the whole market searched for, and how much of it this {data.def.plural} line-up won.</p>
             <p>

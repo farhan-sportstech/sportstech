@@ -5,6 +5,7 @@ import type { Period } from "@/lib/mock";
 import type { AdType } from "@/lib/category";
 import { eur, eur2, int, pct1, pct2 } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import MultiSelect from "../MultiSelect";
 import st from "./AdTypes.module.css";
@@ -28,7 +29,7 @@ const METRICS: M[] = [
 ];
 const DEFAULT = ["spend", "share", "acos"];
 
-export default function AdTypes({ periods, types, mode }: { periods: Period[]; types: AdType[]; mode: string }) {
+export default function AdTypes({ periods, types, mode, sample }: { periods: Period[]; types: AdType[]; mode: string; sample?: string }) {
   const [metrics, setMetrics] = useState(DEFAULT);
   const shown = METRICS.filter((m) => metrics.includes(m.key));
   const tot = periods.map((_, i) => types.reduce((a, t) => a + t.spend[i], 0));
@@ -42,6 +43,7 @@ export default function AdTypes({ periods, types, mode }: { periods: Period[]; t
           <h2 id="at-h" className="ph">
             By ad type
           </h2>
+          <SampleTag live={Boolean(sample)} reason={sample} />
           <Info label="By ad type">
             <p>Sponsored Products and Sponsored Display are attributed to the advertised ASIN, so they are inside every product number on this page.</p>
             <p>Sponsored Brands has no per-ASIN attribution: it is counted at campaign level for SB campaigns whose name identifies a product of this category, shown separately and not part of the product tables.</p>

@@ -6,6 +6,7 @@ import { addCell, zero, type Cell } from "@/lib/ads";
 import { PLACEMENTS, categoryPlacements, type Placement } from "@/lib/placements";
 import { eur, eur2, int, pct1, pct2 } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import Segmented from "../Segmented";
 import Select from "../Select";
@@ -68,6 +69,7 @@ export default function Placements({ data, family, mode, embed }: { data: Catego
           <h2 id={`${uid}pl-h`} className="ph">
             {embed?.title ?? "Placements"}
           </h2>
+          <SampleTag live={data.live} reason="not connected to the database yet" />
           <Info label="Placements">
             <p>Where Sponsored Products ads ran: Top of Search, product pages, the rest of the search results, and off Amazon. Amazon reports placements for Sponsored Products only, and only per week, so this section stays weekly even in the monthly view.</p>
             <p>Own campaigns only: shared catch-all campaigns also advertise other categories and are not split here.</p>

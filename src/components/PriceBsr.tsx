@@ -34,10 +34,10 @@ type Avg = { periods: Period[]; byAsin: Record<string, (number | null)[]> }; // 
 
 /** Listed price and BSR per product. Category pages pass their own `items` (no category filter then)
  *  and `avg` to add the average selling price per period. */
-export default function PriceBsr({ items: given, avg }: { items?: Listing[]; avg?: Avg }) {
+export default function PriceBsr({ items: given, avg, snapshots: snaps }: { items?: Listing[]; avg?: Avg; snapshots?: ReturnType<typeof useHomeData>["snapshots"] }) {
   const home = useHomeData();
   const items = given ?? home.listings;
-  const snapshots = home.snapshots;
+  const snapshots = snaps ?? home.snapshots;
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All categories");
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: "bsrSub", dir: 1 });

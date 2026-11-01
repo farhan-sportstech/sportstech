@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useRef, useState, type CSSProperties } from "react";
 import { getCategory, type Mode, type OverallRow } from "@/lib/category";
+import type { CatRaw } from "@/lib/data/category";
 import { meta } from "@/lib/mock";
 import { acos, change, eur, eur2, int, pct1, pct2, tacos } from "@/lib/format";
 import { downloadCsv } from "@/lib/csv";
@@ -70,8 +71,8 @@ const MINIS: { label: string; kind: CountKind; get: (r: OverallRow) => number; f
   { label: "Units", kind: "int", get: (r) => r.units, fmt: (v) => int.format(v), goodWhen: "up" },
 ];
 
-export default function CategoryDash({ slug }: { slug: string }) {
-  const data = useMemo(() => getCategory(slug)!, [slug]);
+export default function CategoryDash({ slug, raw }: { slug: string; raw?: CatRaw | null }) {
+  const data = useMemo(() => getCategory(slug, raw)!, [slug, raw]);
   const { def } = data;
   const [mode, setMode] = useState<Mode>("weekly");
   const [family, setFamily] = useState("");
@@ -154,7 +155,8 @@ export default function CategoryDash({ slug }: { slug: string }) {
             </Info>
           </div>
           <p className={d.meta}>
-            {meta.marketplace} · {meta.currency} · Category · Data through {meta.dataThrough} · Refreshed manually {meta.lastRefresh}
+            {meta.marketplace} · {meta.currency} · Category ·{" "}
+            {raw?.asOf ? `live data, loaded ${new Date(raw.asOf).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" })}` : `sample data · Data through ${meta.dataThrough}`}
           </p>
         </div>
         <div className={d["pg-ctl"]}>
@@ -333,16 +335,22 @@ export default function CategoryDash({ slug }: { slug: string }) {
         scope={family ? `${family}` : "This category"}
         source={{ periods, totals, ly: data.lastYear(family, mode), deals: data.deals[mode] }}
         toDate={data.toDate(family)}
+        sample={data.live ? "per-period last year is sample; the to-date view is real" : undefined}
       />
       <CategoryProducts families={families} periods={periods} mode={mode} plural={def.plural} listings={data.listings(family)} />
-      <PriceBsr key={`pb${family}`} items={data.listings(family)} avg={avg} />
+      <PriceBsr key={`pb${family}`} items={data.listings(family)} avg={avg} snapshots={raw?.snapshots} />
       <Matrix data={data} family={family} mode={mode} />
       {/* advertising */}
-      <AdTypes periods={periods} types={data.adTypes(family, mode)} mode={mode} />
+      <AdTypes
+        periods={periods}
+        types={data.adTypes(family, mode)}
+        mode={mode}
+        sample={data.live && !(data.real.adTypes && !family) ? (data.real.adTypes ? "the ad-type report covers the whole category only" : "no ad-type report for this category yet") : undefined}
+      />
       <Campaigns data={data} family={family} mode={mode} periods={periods} />
       <Placements data={data} family={family} mode={mode} />
       <BrandedSplit data={data} family={family} mode={mode} periods={periods} />
-      <NoAdSales mode={mode} scope={family || `All ${def.plural}`} source={{ periods, sets: noSales }} />
+      <NoAdSales mode={mode} scope={family || `All ${def.plural}`} source={{ periods, sets: noSales }} sample={data.live ? "not connected to the database yet" : undefined} />
       {/* keywords and search */}
       <KeywordsTargets data={data} family={family} mode={mode} periods={periods} />
       <KeywordCoverage data={data} family={family} mode={mode} />

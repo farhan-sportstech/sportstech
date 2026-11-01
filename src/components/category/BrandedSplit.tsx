@@ -6,6 +6,7 @@ import type { CategoryData, Embed, Mode } from "@/lib/category";
 import { BUCKETS, addCell, categoryAds, scopeRows, zero, type Bucket, type Cell } from "@/lib/ads";
 import { eur, eur2, int, pct1, pct2 } from "@/lib/format";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "../Info";
 import st from "./BrandedSplit.module.css";
 
@@ -40,6 +41,7 @@ export default function BrandedSplit({ data, family, mode, periods, embed }: { d
           <h2 id={`${uid}bk-h`} className="ph">
             {embed?.title ?? "Branded vs non-branded · defensive vs offensive"}
           </h2>
+          <SampleTag live={data.live} reason="not connected to the database yet" />
           <Info label="Branded vs non-branded">
             <p>Where own-campaign ad spend went, from the search-term report: one row per bucket, {unit}s across.</p>
             <p>

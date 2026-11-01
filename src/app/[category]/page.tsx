@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import CategoryDash from "@/components/category/CategoryDash";
 import DashSkeleton from "@/components/Skeleton";
 import { CATEGORY_DEFS } from "@/lib/category";
+import { getCategoryRaw } from "@/lib/data/category";
 
 export function generateStaticParams() {
   return CATEGORY_DEFS.map((c) => ({ category: c.slug }));
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: PageProps<"/[category]">): Pr
 async function Category({ params }: { params: PageProps<"/[category]">["params"] }) {
   const { category } = await params;
   if (!CATEGORY_DEFS.some((c) => c.slug === category)) notFound();
-  return <CategoryDash slug={category} />;
+  return <CategoryDash slug={category} raw={await getCategoryRaw(category)} />;
 }
 
 export default function CategoryPage({ params }: PageProps<"/[category]">) {
