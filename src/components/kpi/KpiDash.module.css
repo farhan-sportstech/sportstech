@@ -1,0 +1,315 @@
+.hd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+  margin-bottom: 14px;
+}
+.sub {
+  margin-left: 6px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+/* focus stepper: older / newer around the focused period */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 40px;
+  padding: 3px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.stepper span {
+  padding: 0 10px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.stepper b {
+  color: var(--ink);
+}
+.stepper button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color 0.14s ease, transform 0.12s var(--ease-out);
+}
+.stepper button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.stepper button:active:not(:disabled) {
+  transform: scale(0.92);
+}
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+@media (hover: hover) and (pointer: fine) {
+  .stepper button:hover:not(:disabled) {
+    background: var(--surface-3);
+    color: var(--ink);
+  }
+}
+
+/* tiles: hairline grid, four across */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--line);
+}
+/* one tile: label, value, change, then the last 8 periods as bars across the full width; nothing leaves the tile */
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 16px 18px 14px;
+  overflow: hidden;
+  background: var(--surface);
+  animation: rise 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+  transition: background-color 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover {
+    background: var(--surface-2);
+  }
+}
+.tl {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.tv {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.td {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.tb {
+  justify-content: space-between;
+  width: 100%;
+  height: 32px !important;
+  margin-top: 6px;
+}
+
+/* entrance shared by tiles and table rows: a short rise and fade */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.rows > tr {
+  animation: rise 0.42s var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 14) * 28ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .rows > tr {
+    animation: none;
+  }
+}
+@media (max-width: 1200px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.legend {
+  display: flex;
+  gap: 4px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.legend span,
+.sw {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.legend i,
+.sw i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+.line,
+.span {
+  margin-bottom: 10px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+.span {
+  padding: 0 24px 4px;
+}
+.line b,
+.now b {
+  color: var(--ink);
+}
+.trendHd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin: 18px 0 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.trendHd h3 {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+}
+.now {
+  margin-left: auto;
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+
+/* breakdown: the mix chart beside the focus period's numbers */
+.split2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 440px;
+  gap: 28px;
+  align-items: center;
+}
+/* the table owns its column exactly: fixed layout, no min-width from the shared table rules */
+:global(.wdp) .mix {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+:global(.wdp) .mix :is(th, td) {
+  padding-inline: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 1200px) {
+  .split2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+:global(.wdp) .mix thead {
+  position: static;
+}
+:global(.wdp) .mix :is(th, td):first-child {
+  padding-left: 12px;
+}
+:global(.wdp) .mix :is(th, td):last-child {
+  padding-right: 12px;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 1000px) {
+  .two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.half + .half {
+  border-left: 1px solid var(--line);
+}
+.half h3 {
+  padding: 14px 24px 8px;
+  font-family: var(--font-head);
+  font-size: 14.5px;
+  font-weight: 700;
+}
+.upT {
+  color: var(--good);
+}
+.downT {
+  color: var(--bad);
+}
+
+/* the sheet: change columns, then every period; a click on a period header focuses it */
+.end {
+  border-right: 1px solid var(--line-strong);
+}
+.colBtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .colBtn:hover {
+    color: var(--accent-ink);
+  }
+}
+.mName {
+  min-width: 190px;
+}
+:global(.wdp) .grp > :is(th, td) {
+  height: 40px;
+  background: var(--surface-2);
+}
+.grp button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.grp button svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s var(--ease-out);
+}
+.grp button[aria-expanded="false"] svg {
+  transform: rotate(-90deg);
+}
+.grp small {
+  font-weight: 500;
+  color: var(--ink-3);
+}

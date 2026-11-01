@@ -1,0 +1,81 @@
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.grid {
+  stroke: var(--line);
+}
+.axis {
+  font-size: 11px;
+  fill: var(--ink-3);
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+}
+.axisOn {
+  fill: var(--ink);
+  font-weight: 700;
+}
+.hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+/* bars grow up from the baseline, one after another; the focused one stays full strength */
+.bar {
+  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: rise 0.6s var(--ease-out) both;
+}
+@keyframes rise {
+  from {
+    transform: scaleY(0);
+  }
+}
+.bar rect:not(.hit) {
+  opacity: 0.5;
+  transition: opacity 0.18s ease;
+}
+.bar.on rect:not(.hit) {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .bar:hover rect:not(.hit) {
+    opacity: 0.85;
+  }
+  .bar:hover .hit {
+    fill: color-mix(in srgb, var(--ink) 4%, transparent);
+  }
+}
+
+.sel {
+  stroke: var(--ink-3);
+  stroke-dasharray: 3 4;
+  opacity: 0.6;
+}
+.line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: draw 0.9s var(--ease-out) both;
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+.dot {
+  fill: var(--accent);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+}
+.dotOn {
+  fill: var(--surface);
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
