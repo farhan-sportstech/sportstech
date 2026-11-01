@@ -201,7 +201,6 @@ h1, h2, h3 {
 .wd-main {
   padding: 28px 32px 72px calc(var(--sb-w) + 36px);
   max-width: calc(1600px + var(--sb-w));
-  transition: padding-left 0.24s var(--ease-out);
 }
 
 body:has(#wd-sb[data-mini="true"]) .wd-main {
