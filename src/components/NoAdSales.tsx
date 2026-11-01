@@ -5,7 +5,7 @@ import { monthly, noAdSales, weekly, type NoSale, type Period } from "@/lib/mock
 
 export type NoSaleSet = { products: NoSale[]; campaigns: NoSale[]; keywords: NoSale[] };
 import { eur, eur2, int } from "@/lib/format";
-import { SampleTag } from "@/lib/homeData";
+import { SampleTag, useHomeData } from "@/lib/homeData";
 import Info from "./Info";
 import Segmented from "./Segmented";
 import Select from "./Select";
@@ -18,8 +18,11 @@ const minOf = (s: string) => Number(s.replace(/\D/g, "")) || 0;
 
 /** Whole account by default; category pages pass their own periods and sets. */
 export default function NoAdSales({ mode, source, scope }: { mode: "weekly" | "monthly"; source?: { periods: Period[]; sets: NoSaleSet[] }; scope?: string }) {
-  const periods = source?.periods ?? (mode === "weekly" ? weekly : monthly).periods;
-  const sets = source?.sets ?? noAdSales[mode];
+  // the whole-account page uses the database's weeks when it has them (no monthly lists yet)
+  const home = useHomeData();
+  const liveNos = !source && mode === "weekly" ? home.nos : null;
+  const periods = source?.periods ?? liveNos?.periods ?? (mode === "weekly" ? weekly : monthly).periods;
+  const sets = source?.sets ?? liveNos?.sets ?? noAdSales[mode];
   const unit = mode === "weekly" ? "week" : "month";
   const options = periods.map((p) => `${p.kw} · ${p.label}`);
   const [picked, setPicked] = useState({ mode, i: 0 });
@@ -30,7 +33,8 @@ export default function NoAdSales({ mode, source, scope }: { mode: "weekly" | "m
   const i = picked.mode === mode ? picked.i : 0;
   const set = sets[i];
   const needle = q.trim().toLowerCase();
-  const val = (z: NoSale) => (sort.key === "sales" ? (z.sales ?? -1) : z[sort.key]);
+  const val = (z: NoSale) => (sort.key === "sales" ? (z.sales ?? -1) : (z[sort.key] ?? -1));
+  const sumOf = (k: "clicks" | "impressions") => (rows.some((z) => z[k] === null) ? null : rows.reduce((t, z) => t + (z[k] ?? 0), 0));
   const rows = set[view].filter((z) => z.adSpend >= minOf(min) && (!needle || `${z.name} ${z.sub}`.toLowerCase().includes(needle))).sort((a, b) => (val(a) - val(b)) * sort.dir);
   const total = sum(rows);
   const filtered = needle !== "" || minOf(min) > 0;
@@ -53,13 +57,17 @@ export default function NoAdSales({ mode, source, scope }: { mode: "weekly" | "m
           <h2 id="ns-h" className="ph">
             Ad spend with no ad sales
           </h2>
-          <SampleTag />
+          <SampleTag when={!source && !liveNos} reason={home.nos ? "monthly lists aren't stored" : undefined} />
           <Info label="Ad spend with no ad sales">
             <p>
               {scope ? `${scope}: ad` : "Ad"} spend above €0 with €0 tool4seller ad sales in the selected {unit}.
             </p>
             <p>Total sales are all sales of that product (organic and ads, all channels), so a product can sell while its ads sold nothing.</p>
-            <p>Campaigns are own campaigns only; shared catch-all campaigns are not split by product.</p>
+            {liveNos ? (
+              <p>Campaigns and keywords come from the account-wide weekly lists: those with €20 or more spend and no ad sales. Clicks and impressions aren&apos;t stored for them, so they show —. The database holds the 4 newest weeks.</p>
+            ) : (
+              <p>Campaigns are own campaigns only; shared catch-all campaigns are not split by product.</p>
+            )}
           </Info>
         </div>
         <div className="filters">
@@ -124,8 +132,8 @@ export default function NoAdSales({ mode, source, scope }: { mode: "weekly" | "m
                 </th>
                 <td className="n strong">{eur2.format(z.adSpend)}</td>
                 <td className="n zero">€0,00</td>
-                <td className="n">{int.format(z.clicks)}</td>
-                <td className="n">{int.format(z.impressions)}</td>
+                <td className="n">{z.clicks === null ? <span className="na">—</span> : int.format(z.clicks)}</td>
+                <td className="n">{z.impressions === null ? <span className="na">—</span> : int.format(z.impressions)}</td>
                 {view === "products" ? <td className="n">{z.sales === null ? <span className="na">—</span> : eur.format(z.sales)}</td> : null}
               </tr>
             ))}
@@ -136,8 +144,8 @@ export default function NoAdSales({ mode, source, scope }: { mode: "weekly" | "m
                 <th scope="row">Total</th>
                 <td className="n">{eur2.format(total)}</td>
                 <td className="n">€0,00</td>
-                <td className="n">{int.format(rows.reduce((t, z) => t + z.clicks, 0))}</td>
-                <td className="n">{int.format(rows.reduce((t, z) => t + z.impressions, 0))}</td>
+                <td className="n">{sumOf("clicks") === null ? "—" : int.format(sumOf("clicks")!)}</td>
+                <td className="n">{sumOf("impressions") === null ? "—" : int.format(sumOf("impressions")!)}</td>
                 {view === "products" ? <td /> : null}
               </tr>
             </tfoot>

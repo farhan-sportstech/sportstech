@@ -19,7 +19,7 @@ const ALL_CATS = "All categories";
 type SortKey = "now" | "change" | "spend" | "sales";
 
 export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
-  const { weekly, monthly, products, live } = useHomeData();
+  const { weekly, monthly, products, live, wins } = useHomeData();
   const data = mode === "weekly" ? weekly : monthly;
   const unit = mode === "weekly" ? "week" : "month";
   const options = data.periods.slice(0, -1).map((p) => `${p.kw} · ${p.label}`);
@@ -55,6 +55,20 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
           salesPct: (a.sales / tot.sales) * 100,
         }));
     }
+    // weekly campaign and keyword lines come straight from the database, with its stored shares and previous ACOS
+    const stored = live && mode === "weekly" ? wins?.[view]?.[i] : undefined;
+    if (stored)
+      return stored.map((c, n) => ({
+        key: `${c.name}${n}`,
+        name: c.name,
+        sub: c.sub,
+        prev: c.prevAcos,
+        now: c.sales ? (c.spend / c.sales) * 100 : null,
+        spend: c.spend,
+        spendPct: c.spendPct,
+        sales: c.sales,
+        salesPct: c.salesPct,
+      }));
     const src = (view === "campaigns" ? campaigns : keywords)[mode];
     return src.map((c, n) => ({
       key: `${c.name}${n}`,
@@ -67,7 +81,7 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
       sales: c.adSales[i],
       salesPct: (c.adSales[i] / tot.sales) * 100,
     }));
-  }, [data, mode, i, view, products, live]);
+  }, [data, mode, i, view, products, live, wins]);
 
   // search and category narrow both sides, so the Good / Bad counts follow the filters
   const needle = q.trim().toLowerCase();
@@ -98,7 +112,7 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
           <h2 id="wins-h" className="ph">
             Wins &amp; TACoS
           </h2>
-          {view !== "products" ? <SampleTag /> : null}
+          <SampleTag when={view !== "products" && !(wins && mode === "weekly")} reason={wins ? "monthly campaign and keyword lists aren't stored" : undefined} />
           <Info label="Wins & TACoS">
             <p>
               Parents with at least €20 ad spend in the selected {unit} and sales in both {unit}s. TACoS = ad spend ÷ total sales; change in points vs the {unit} before. Good = below 15%, Bad = 15% or higher. Spend % and Sales % are shares of the account total.

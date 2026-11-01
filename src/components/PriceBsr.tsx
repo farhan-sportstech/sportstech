@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { listings, snapshots, type Listing, type Period } from "@/lib/mock";
+import type { Listing, Period } from "@/lib/mock";
 import { eur, eur2, int } from "@/lib/format";
 import Icon from "./NavIcon";
 import st from "./PriceBsr.module.css";
 import { cx } from "@/lib/cx";
-import { SampleTag } from "@/lib/homeData";
+import { useHomeData } from "@/lib/homeData";
 import Info from "./Info";
 import Select from "./Select";
 
@@ -34,7 +34,10 @@ type Avg = { periods: Period[]; byAsin: Record<string, (number | null)[]> }; // 
 
 /** Listed price and BSR per product. Category pages pass their own `items` (no category filter then)
  *  and `avg` to add the average selling price per period. */
-export default function PriceBsr({ items = listings, avg }: { items?: Listing[]; avg?: Avg }) {
+export default function PriceBsr({ items: given, avg }: { items?: Listing[]; avg?: Avg }) {
+  const home = useHomeData();
+  const items = given ?? home.listings;
+  const snapshots = home.snapshots;
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All categories");
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: "bsrSub", dir: 1 });
@@ -82,7 +85,6 @@ export default function PriceBsr({ items = listings, avg }: { items?: Listing[];
           <h2 id="pb-h" className="ph">
             Price &amp; BSR
           </h2>
-          <SampleTag />
           <Info label="Price & BSR">
             {avg ? <p>Avg selling price = tool4seller sales ÷ units per period: what buyers paid on average after discounts and coupons. A dash means no units sold.</p> : null}
             <p>

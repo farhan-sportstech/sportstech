@@ -51,7 +51,7 @@ export default function Comparisons({ mode, source, toDate, scope = "Whole accou
         <h2 id="cmp-h" className="ph">
           Comparisons
         </h2>
-        <SampleTag />
+        <SampleTag reason="no last-year figures in the database yet" />
         <Info label="Comparisons">
           <p>
             {scope}: the selected {unit} against the one before, the average of the 4 before that, the last {unit} of the same type, and the same {unit} last year. Green is better, red is worse; ad spend is not coloured.

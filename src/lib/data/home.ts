@@ -35,25 +35,47 @@ const toXRow = (m: AsinRow | undefined, acct: { sales: number; sp: number }): Ro
     acctSp: acct.sp,
   }) as Row;
 
+type MetaRow = {
+  asin: string;
+  level: string;
+  ord: number;
+  name: string | null;
+  category: string | null;
+  parent: string | null;
+  children: string[] | null;
+  bsr_sub: Num;
+  bsr_sub_cat: string | null;
+  bsr_main: Num;
+  d_sub: Num;
+  d_main: Num;
+  list_price: Num;
+  d_price: Num;
+  price_src: string | null;
+};
+
 /** "19–25 Oct", or "28 Sep–4 Oct" across a month end */
 const weekLabel = (s: string, e: string) => (mon(s) === mon(e) ? `${day(s)}–${day(e)} ${mon(e)}` : `${day(s)} ${mon(s)}–${day(e)} ${mon(e)}`);
 
 export async function getHome(): Promise<HomeData> {
   "use cache";
   cacheLife("hours");
-  const [per, cats, am, meta, skus, ov, sb, page, asOf] = await Promise.all([
+  const [per, cats, am, meta, skus, ov, sb, page, asOf, gens, nosRaw, xwn, src] = await Promise.all([
     selectAll<PeriodRow>("dash_period", "select=period_key,ord,start_date,end_date,kw&slug=eq.home&order=ord"),
     selectAll<MetricRow & { category: string; spend_sp: Num }>("category_metrics", "select=category,period_key,sales,units,spend,ad_sales,ad_sales_halo,spend_sp&slug=eq.home&category=neq.__total__"),
     selectAll<AsinRow>("asin_metrics", "select=asin,level,period_key,sales,units,spend,ad_sales,ad_sales_halo,orders,sessions,clicks,impressions,ad_orders,spend_sp,bsr_sub,bsr_main&slug=eq.home"),
-    selectAll<{ asin: string; level: string; ord: number; name: string | null; category: string | null; parent: string | null; children: string[] | null }>(
-      "asin_meta",
-      "select=asin,level,ord,name,category,parent,children&slug=eq.home&order=ord",
-    ),
+    selectAll<MetaRow>("asin_meta", "select=asin,level,ord,name,category,parent,children,bsr_sub,bsr_sub_cat,bsr_main,d_sub,d_main,list_price,d_price,price_src&slug=eq.home&order=ord"),
     selectAll<{ asin: string; sku: string; ord: number }>("asin_sku", "select=asin,sku,ord&slug=eq.home&order=ord"),
     selectAll<Record<string, Num> & { grain: string; ord: number; period_key: string; label: string; note: string | null }>("ov_period", "select=*&slug=eq.home&scope=eq.t&order=ord"),
     selectAll<{ period_key: string; spend: Num; adsales: Num }>("sbsd_period", "select=period_key,spend,adsales"),
     selectAll<{ latest_data_date: string | null }>("dash_page", "select=latest_data_date&slug=eq.home"),
     lastLoad(),
+    selectAll<{ gen: number }>("wdx_gen", "select=gen&status=eq.ok&order=gen.desc&limit=1"),
+    selectAll<{ gen: number; period: string; grp: string; name: string | null; asin: string | null; parent: string | null; spend: Num; clicks: Num; impressions: Num; sales: Num }>(
+      "wdx_nos",
+      "select=gen,period,grp,name,asin,parent,spend,clicks,impressions,sales&slug=eq.home&order=ord",
+    ),
+    selectAll<{ kind: string; period_key: string; name: string; sub: string | null; sp1: Num; sa1: Num; a0: Num; spp: Num; slp: Num }>("xwn_row", "select=kind,period_key,name,sub,sp1,sa1,a0,spp,slp&order=ord"),
+    selectAll<{ source: string; as_of: string | null }>("dash_page_source", "select=source,as_of&slug=eq.home"),
   ]);
   if (!per || !cats || !am || !meta || !skus || !ov || !sb) return SAMPLE_HOME;
 
@@ -143,6 +165,52 @@ export async function getHome(): Promise<HomeData> {
   };
   const sessionsDay = ov.filter((r) => r.grain === "daily" && r.sessions !== null).map((r) => r.period_key)[0];
 
+  // Wins campaign / keyword lines and their no-ad-sales lists: xwn_row holds the 4 newest weeks (w1…w4)
+  const xweeks = wk.slice(0, 4);
+  const winLine = (r: NonNullable<typeof xwn>[number]) => ({ name: r.name, sub: r.sub ?? "", spend: n(r.sp1), sales: n(r.sa1), prevAcos: r.a0 === null ? null : n(r.a0), spendPct: n(r.spp), salesPct: n(r.slp) });
+  const wins = xwn?.length
+    ? { campaigns: xweeks.map((k) => xwn.filter((r) => r.kind === "c" && r.period_key === k).map(winLine)), keywords: xweeks.map((k) => xwn.filter((r) => r.kind === "k" && r.period_key === k).map(winLine)) }
+    : null;
+
+  // spend without ad sales: child ASINs from wdx_nos (current generation), campaigns and keywords from xwn_row with no ad sales
+  const gen = gens?.[0]?.gen;
+  const nos =
+    nosRaw && xwn && gen !== undefined
+      ? {
+          periods: weeks.slice(0, 4).map((p) => toPeriod(p, false)),
+          sets: xweeks.map((k) => ({
+            products: nosRaw
+              .filter((r) => r.gen === gen && r.grp === "p" && r.period === k)
+              .map((r) => ({ name: r.name ?? r.asin ?? "—", sub: `${r.asin ?? ""}${r.parent && r.parent !== r.asin ? ` · parent ${r.parent}` : ""}`, adSpend: n(r.spend), clicks: n(r.clicks), impressions: n(r.impressions), sales: r.sales === null ? null : n(r.sales) })),
+            campaigns: xwn.filter((r) => r.kind === "c" && r.period_key === k && n(r.sa1) === 0).map((r) => ({ name: r.name, sub: r.sub ?? "", adSpend: n(r.sp1), clicks: null, impressions: null, sales: null })),
+            keywords: xwn.filter((r) => r.kind === "k" && r.period_key === k && n(r.sa1) === 0).map((r) => ({ name: r.name, sub: r.sub ?? "", adSpend: n(r.sp1), clicks: null, impressions: null, sales: null })),
+          })),
+        }
+      : null;
+
+  // Price & BSR: child ASINs with a BSR snapshot and a listed price; previous values from the stored changes
+  const catOf = new Map(meta.filter((m) => m.level === "parents").map((m) => [m.asin, m.category ?? "Other"]));
+  const listings = meta
+    .filter((m) => m.level === "children" && m.bsr_sub !== null && m.bsr_main !== null && m.list_price !== null)
+    .map((m) => ({
+      asin: m.asin,
+      name: m.name ?? m.asin,
+      category: (m.parent && catOf.get(m.parent)) || "Other",
+      subCat: m.bsr_sub_cat ?? "",
+      bsrSub: n(m.bsr_sub),
+      bsrSubPrev: n(m.bsr_sub) - n(m.d_sub),
+      bsrMain: n(m.bsr_main),
+      bsrMainPrev: n(m.bsr_main) - n(m.d_main),
+      price: n(m.list_price),
+      pricePrev: n(m.list_price) - n(m.d_price),
+      fromReport: Boolean(m.price_src),
+    }));
+  const asOfSrc = (k: string) => {
+    const v = src?.find((s) => s.source === k)?.as_of;
+    return v ? `${day(v)} ${mon(v)}` : "—";
+  };
+  const snapshots = { bsr: asOfSrc("ac_bsr.bsr"), bsrPrev: asOfSrc("ac_bsr.bsr_prev"), price: asOfSrc("ac_bsr.price"), pricePrev: asOfSrc("ac_bsr.price_prev"), report: asOfSrc("price_list") };
+
   return {
     weekly: dataset(weeks, false),
     monthly: dataset(months, true),
@@ -156,6 +224,10 @@ export async function getHome(): Promise<HomeData> {
       lastRefresh: asOf ? new Date(asOf).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }) : "—",
       sessionsThrough: sessionsDay ? `${day(sessionsDay)} ${mon(sessionsDay)}` : "—",
     },
+    nos,
+    wins,
+    listings,
+    snapshots,
     live: true,
   };
 }

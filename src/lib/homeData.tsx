@@ -15,12 +15,12 @@ export function HomeDataProvider({ data, children }: { data: HomeData; children:
   return <Ctx.Provider value={data}>{children}</Ctx.Provider>;
 }
 
-/** Marks a section that still shows sample figures on an otherwise live page. */
-export function SampleTag() {
+/** Marks a section (or a view of it, with `when`) that still shows sample figures on an otherwise live page. */
+export function SampleTag({ when = true, reason }: { when?: boolean; reason?: string }) {
   const { live } = useHomeData();
-  return live ? (
-    <span className="sample-tag" title="This section isn't connected to the database yet; its figures are invented.">
-      Sample data
+  return live && when ? (
+    <span className="sample-tag" title={reason ?? "This section isn't connected to the database yet; its figures are invented."}>
+      Sample data{reason ? ` · ${reason}` : ""}
     </span>
   ) : null;
 }

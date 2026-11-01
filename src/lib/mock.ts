@@ -295,7 +295,8 @@ export const listings: Listing[] = (() => {
 export const snapshots = { bsr: "30 Oct", bsrPrev: "23 Oct", price: "28 Oct", pricePrev: "21 Oct", report: "29 Oct" };
 
 /* ---------- Ad spend with no ad sales (child ASINs, campaigns, keywords per period) ---------- */
-export type NoSale = { name: string; sub: string; adSpend: number; clicks: number; impressions: number; sales: number | null };
+// clicks / impressions are null where the source doesn't carry them (the account-wide campaign and keyword lists)
+export type NoSale = { name: string; sub: string; adSpend: number; clicks: number | null; impressions: number | null; sales: number | null };
 
 export const noAdSales: Record<"weekly" | "monthly", { products: NoSale[]; campaigns: NoSale[]; keywords: NoSale[] }[]> = (() => {
   const rnd = rng(113);
