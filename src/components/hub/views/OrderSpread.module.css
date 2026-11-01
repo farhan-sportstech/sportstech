@@ -1,0 +1,81 @@
+/* group rows that start a new block get a stronger rule above */
+:global(.wdp) .sep > :is(th, td) {
+  border-top: 1px solid var(--line-strong);
+}
+.lead > th {
+  font-weight: 700;
+}
+
+/* horizontal bar list: label, bar, value */
+.list {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+.item {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr) 96px;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  animation: rise 0.42s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 30ms);
+}
+.item > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+.track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--surface-2);
+}
+.track i {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: var(--accent);
+  transform: scaleX(var(--w, 0));
+  transform-origin: left;
+  animation: grow 0.75s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 30ms + 80ms);
+}
+.warm i {
+  background: color-mix(in srgb, var(--bad) 70%, transparent);
+}
+.val {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.hd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-bottom: 12px;
+}
+.hd h2 {
+  margin: 0;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .track i {
+    animation: none;
+  }
+}

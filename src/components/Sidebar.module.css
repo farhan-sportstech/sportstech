@@ -326,3 +326,48 @@
     transform: scale(0);
   }
 }
+
+/* queued-changes count beside Pending changes; pops when the number changes */
+.badge {
+  flex: none;
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 5px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  animation: badge-pop 0.35s var(--ease-out);
+}
+/* the count stands in for the active dot */
+a.on:has(.badge)::after {
+  display: none;
+}
+.lb:has(+ .badge) {
+  min-width: 0;
+}
+.sb[data-mini="true"] .badge {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 10px;
+  line-height: 16px;
+}
+@keyframes badge-pop {
+  from {
+    transform: scale(0.6);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge {
+    animation: none;
+  }
+}

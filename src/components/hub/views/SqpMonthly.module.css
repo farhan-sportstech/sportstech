@@ -1,0 +1,40 @@
+.star {
+  width: 44px;
+  padding-right: 0 !important;
+}
+.starBtn {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease, transform 0.15s var(--ease-out);
+}
+.starBtn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+.starBtn:active {
+  transform: scale(0.88);
+}
+.starBtn.on {
+  color: var(--warn);
+}
+.starBtn.on svg {
+  fill: currentColor;
+}
+@media (hover: hover) and (pointer: fine) {
+  .starBtn:hover {
+    background: var(--surface-3);
+    color: var(--warn);
+  }
+}

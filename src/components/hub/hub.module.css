@@ -1,0 +1,445 @@
+/* drill-down links in table cells: read as text, underline on hover */
+:global(.lnk) {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  :global(.lnk):hover {
+    color: var(--accent-ink);
+    text-decoration-color: currentColor;
+  }
+}
+
+/* a view's own column inside the hub layout */
+.view {
+  max-width: none;
+}
+
+/* ---------- shared filter bar ---------- */
+.fbar {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.frow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.search {
+  width: 220px;
+  max-width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+.search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  outline: none;
+}
+.moreBtn svg {
+  transition: transform 0.25s var(--ease-out);
+}
+.moreBtn[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+.reset {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-ink);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s var(--ease-out);
+}
+.more.open {
+  grid-template-rows: 1fr;
+}
+.moreIn {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  min-height: 0;
+  overflow: hidden;
+}
+.open .moreIn {
+  padding-top: 12px;
+}
+.numF {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.numF input {
+  width: 84px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.numF input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+/* ---------- table ---------- */
+.tbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 20px;
+  padding: 2px 24px 16px;
+}
+.name {
+  min-width: 220px;
+  max-width: 380px;
+  white-space: normal !important;
+}
+.name small {
+  display: block;
+  margin-top: 2px;
+}
+:global(.wdp) td.heat {
+  background-image: linear-gradient(color-mix(in srgb, var(--heat, transparent) var(--ha, 0%), transparent), color-mix(in srgb, var(--heat, transparent) var(--ha, 0%), transparent));
+}
+.act {
+  white-space: nowrap;
+}
+.act > * + * {
+  margin-left: 6px;
+}
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px 14px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--line);
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.rows > tr {
+  animation: rise 0.38s var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 16) * 18ms);
+}
+
+/* queue button: quiet until used, then it says so */
+.q {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s var(--ease-out);
+}
+.q:active {
+  transform: scale(0.95);
+}
+@media (hover: hover) and (pointer: fine) {
+  .q:hover {
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+}
+.q.done {
+  border-color: transparent;
+  background: var(--good-soft);
+  color: var(--good);
+}
+.q svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* small tags in cells */
+.tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 5px;
+  background: var(--surface-3);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.tag.good {
+  background: var(--good-soft);
+  color: var(--good);
+}
+.tag.bad {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+.tag.warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.tag.accent {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.muted {
+  color: var(--ink-3);
+}
+
+/* hairline tile grid used by the overview views */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 6), minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--line);
+}
+/* narrower screens: two across, and an odd last tile takes the whole row so no empty cell shows */
+@media (max-width: 1200px) {
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tiles > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 16px 18px 14px;
+  overflow: hidden;
+  background: var(--surface);
+  animation: rise 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+button.tile {
+  border: 0;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  button.tile:hover {
+    background: var(--surface-2);
+  }
+}
+button.tile.on {
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+.tl {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.tv {
+  font-family: var(--font-head);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.td {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.tb {
+  justify-content: space-between;
+  width: 100%;
+  height: 28px !important;
+  margin-top: 6px;
+}
+
+/* a horizontal share bar inside a cell */
+.share {
+  display: inline-block;
+  width: 70px;
+  height: 6px;
+  margin-left: 8px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--surface-3);
+  vertical-align: middle;
+}
+.share i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  transform: scaleX(var(--w, 0));
+  transform-origin: left;
+  animation: grow 0.7s var(--ease-out) both;
+}
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* trees: rows indent by depth and fold */
+.tree th {
+  padding-left: calc(16px + var(--depth, 0) * 22px) !important;
+}
+.tree .fold {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tree .fold svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.25s var(--ease-out);
+}
+.tree .fold[aria-expanded="false"] svg {
+  transform: rotate(-90deg);
+}
+.tree .leaf {
+  font-weight: 500;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 1100px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.ctlRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+.numIn {
+  width: 72px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+}
+.numIn:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+.lbl {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.cellSelect {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+}
+.cellInput {
+  width: 160px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rows > tr,
+  .tile,
+  .share i {
+    animation: none;
+  }
+  .more {
+    transition: none;
+  }
+}

@@ -7,6 +7,7 @@ import Icon from "./NavIcon";
 import s from "./Sidebar.module.css";
 import { cx } from "@/lib/cx";
 import { NAV, NAV_TITLE, isGroup, isHeading, type NavGroup, type NavLeaf } from "@/lib/nav";
+import { useQueue } from "@/lib/queue";
 
 const pathOf = (href: string) => href.split("#")[0];
 const norm = (p: string) => (p.endsWith("/") ? p : p + "/");
@@ -24,8 +25,19 @@ function Leaf({ item, here, sub }: { item: NavLeaf; here: string; sub?: boolean 
     >
       <Icon name={item.icon} />
       <span className={s.lb}>{item.label}</span>
+      {item.href === "/writeback/pending/" ? <QueueCount /> : null}
     </Link>
   );
+}
+
+// queued changes waiting to be sent, shown beside Pending changes
+function QueueCount() {
+  const n = useQueue().length;
+  return n ? (
+    <span key={n} className={s.badge} aria-label={`${n} queued`}>
+      {n}
+    </span>
+  ) : null;
 }
 
 function Group({ group, here }: { group: NavGroup; here: string }) {

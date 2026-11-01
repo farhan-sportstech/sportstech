@@ -1,0 +1,61 @@
+/* 24 hourly columns from a zero baseline; the busiest hour is accented */
+.hours {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 170px;
+  margin-top: 12px;
+}
+.hb {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  min-width: 0;
+}
+.col {
+  position: relative;
+  flex: 1;
+  width: 100%;
+}
+.fill {
+  position: absolute;
+  inset: auto 0 0;
+  height: calc(var(--h) * 100%);
+  min-height: 3px;
+  border-radius: 4px 4px 2px 2px;
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+  transform-origin: bottom;
+  animation: grow 0.7s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 22ms + 80ms);
+  transition: background-color 0.15s ease;
+}
+.top .fill {
+  background: var(--accent);
+}
+.hl {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.top .hl {
+  color: var(--accent-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hb:hover .fill {
+    background: var(--accent-ink);
+  }
+}
+@keyframes grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    animation: none;
+  }
+}

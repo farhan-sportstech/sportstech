@@ -1,0 +1,320 @@
+/* shared by the three PPC tools pages */
+
+/* day / period stepper, same shape as the KPI focus stepper */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 40px;
+  padding: 3px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.stepper span {
+  padding: 0 10px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.stepper b {
+  color: var(--ink);
+}
+.stepper button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color 0.14s ease, transform 0.12s var(--ease-out);
+}
+.stepper button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.stepper button:active:not(:disabled) {
+  transform: scale(0.92);
+}
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+@media (hover: hover) and (pointer: fine) {
+  .stepper button:hover:not(:disabled) {
+    background: var(--surface-3);
+    color: var(--ink);
+  }
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding: 2px 24px 18px;
+}
+.search {
+  width: 240px;
+  max-width: 100%;
+}
+.name {
+  min-width: 260px;
+  white-space: normal !important;
+}
+.name small {
+  display: block;
+  margin-top: 3px;
+}
+
+/* entrance: tiles and rows rise in one after another */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.rows > tr {
+  animation: rise 0.42s var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 14) * 28ms);
+}
+
+/* ---------- spike alerts ---------- */
+.ruleGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--line);
+}
+@media (max-width: 1100px) {
+  .ruleGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.ruleTile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  animation: rise 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ruleTile:hover {
+    background: var(--surface-2);
+  }
+}
+.ruleTile.on {
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+.ruleTile.quiet .rv {
+  color: var(--ink-3);
+}
+.rl {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.rv {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.rd {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+/* the rule's alerts per day over the last 7 days, across the tile */
+.tb {
+  justify-content: space-between;
+  width: 100%;
+  height: 30px !important;
+  margin-top: 8px;
+}
+.sev {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 7px;
+  border-radius: 5px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.sev.high {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+.spark {
+  gap: 3px !important;
+  height: 26px !important;
+}
+.spark > * {
+  width: 5px !important;
+}
+
+/* ---------- ACOS × CPC matrix ---------- */
+.matrix th,
+.matrix td {
+  text-align: right;
+}
+:global(.wdp) .matrix td.cell {
+  position: relative;
+  padding-block: 10px;
+  background: color-mix(in srgb, var(--accent) calc(var(--a, 0) * 1%), var(--surface));
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.15s ease;
+}
+:global(.wdp) .matrix td.cell.picked {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+:global(.wdp) .matrix td.cell:focus-visible {
+  outline-offset: -2px;
+}
+.cell b {
+  display: block;
+  font-weight: 700;
+}
+.cell small {
+  display: block;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.cell.hot small {
+  color: var(--ink-2);
+}
+.dot {
+  color: var(--ink-3);
+}
+.warnT {
+  color: var(--bad) !important;
+}
+.note {
+  padding: 0 24px 18px;
+  max-width: 110ch;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+.note b {
+  color: var(--ink);
+}
+
+/* ---------- heatmap ---------- */
+.heat {
+  display: grid;
+  grid-template-columns: 44px repeat(24, minmax(0, 1fr)) 76px;
+  gap: 3px;
+  min-width: 760px;
+}
+.heat .hh,
+.heat .dl {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.heat .hh {
+  text-align: center;
+}
+.heat .dl {
+  align-self: center;
+}
+.hc {
+  display: grid;
+  place-items: center;
+  height: 34px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--accent) calc(var(--a, 0) * 1%), var(--surface-2));
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  animation: pop 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--d, 0) * 60ms + var(--h, 0) * 12ms);
+  transition: background-color 0.35s ease, transform 0.12s ease;
+}
+.hc.dark {
+  color: #fff;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hc:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--accent);
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+.rowSum {
+  align-self: center;
+  text-align: right;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.heatWrap {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.legendBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.legendBar i {
+  width: 140px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--surface-2), var(--accent));
+}
+.peaks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-bottom: 14px;
+  font-size: 13.5px;
+  color: var(--ink-3);
+}
+.peaks b {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rows > tr,
+  .ruleTile,
+  .hc {
+    animation: none;
+  }
+}

@@ -1,0 +1,9 @@
+/* 13-week search volume as tiny columns inside a table cell */
+.spark {
+  gap: 2px !important;
+  width: 92px;
+  height: 24px !important;
+}
+.spark > * {
+  width: 5px !important;
+}

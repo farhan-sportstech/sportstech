@@ -1,0 +1,14 @@
+/* label marker: a small square swatch and the name on one line, like the chart legends */
+.sw {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.sw i {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}

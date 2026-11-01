@@ -1,0 +1,73 @@
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.grid {
+  stroke: var(--line);
+}
+.axis {
+  font-size: 11px;
+  fill: var(--ink-3);
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+}
+.ours,
+.mkt {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: draw 0.9s var(--ease-out) both;
+}
+.ours {
+  stroke: var(--accent);
+}
+.mkt {
+  stroke: color-mix(in srgb, var(--ink) 45%, transparent);
+  stroke-width: 2;
+  animation-delay: 0.15s;
+}
+.dot {
+  fill: var(--accent);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.legend i {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.legend i.m {
+  background: color-mix(in srgb, var(--ink) 45%, transparent);
+}
+.body {
+  padding: 0 24px 18px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ours,
+  .mkt {
+    animation: none;
+  }
+}
