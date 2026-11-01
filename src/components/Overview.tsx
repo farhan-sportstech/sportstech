@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import { overview, type OvRow } from "@/lib/mock";
+import type { OvRow } from "@/lib/mock";
+import { useHomeData } from "@/lib/homeData";
 import { acosOf, eur, eur2, int, pct1, pct2, tacosOf } from "@/lib/format";
 import Segmented from "./Segmented";
 import Info from "./Info";
@@ -101,7 +102,9 @@ type Props = {
   extra?: ReactNode; // rendered under the table (category pages: active products and AOV split)
 };
 
-export default function Overview({ data = overview, scope = "Whole account", extended = false, extra }: Props) {
+export default function Overview({ data: given, scope = "Whole account", extended = false, extra }: Props) {
+  const home = useHomeData();
+  const data = given ?? home.overview;
   const [mode, setMode] = useState<Mode>("daily");
   const rows = data[mode];
   const heads = extended ? [...HEADS, ...EXT_HEADS] : HEADS;

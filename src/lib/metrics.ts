@@ -33,7 +33,7 @@ export function extend(rows: Row[], key: string, mode: "weekly" | "monthly", bsr
     const clicks = Math.round(row.adSpend / (cpc * (0.9 + r() * 0.2)));
     const price = avgPrice(row) ?? 250;
     const drift = 0.8 + r() * 0.45;
-    return {
+    const fake: XRow = {
       ...row,
       orders: Math.round(row.units * (0.96 + r() * 0.035)),
       sessions: Math.round(row.units * sessPerUnit * (0.9 + r() * 0.2)),
@@ -46,6 +46,8 @@ export function extend(rows: Row[], key: string, mode: "weekly" | "monthly", bsr
       acctSales: ACCOUNT[mode][i].sales,
       acctSp: ACCOUNT[mode][i].spend * 0.8,
     };
+    // rows loaded from the database already carry the real fields; those win over the invented ones
+    return "orders" in row ? { ...fake, ...(row as Partial<XRow>) } : fake;
   });
 }
 

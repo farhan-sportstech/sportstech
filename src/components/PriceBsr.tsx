@@ -6,6 +6,7 @@ import { eur, eur2, int } from "@/lib/format";
 import Icon from "./NavIcon";
 import st from "./PriceBsr.module.css";
 import { cx } from "@/lib/cx";
+import { SampleTag } from "@/lib/homeData";
 import Info from "./Info";
 import Select from "./Select";
 
@@ -81,6 +82,7 @@ export default function PriceBsr({ items = listings, avg }: { items?: Listing[];
           <h2 id="pb-h" className="ph">
             Price &amp; BSR
           </h2>
+          <SampleTag />
           <Info label="Price & BSR">
             {avg ? <p>Avg selling price = tool4seller sales ÷ units per period: what buyers paid on average after discounts and coupons. A dash means no units sold.</p> : null}
             <p>

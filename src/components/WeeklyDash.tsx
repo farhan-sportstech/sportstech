@@ -2,7 +2,8 @@
 
 import { useMemo, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
-import { meta, monthly, overview, products, sbsd, weekly, type Dataset, type Row } from "@/lib/mock";
+import type { Dataset, Row } from "@/lib/mock";
+import { useHomeData } from "@/lib/homeData";
 import { acos, change, eur, eur2, int, pct1, pct2, sumRows, tacos } from "@/lib/format";
 import { downloadCsv } from "@/lib/csv";
 import Bars from "./Bars";
@@ -59,6 +60,7 @@ const MINIS: { label: string; kind: CountKind; get: (r: Row) => number; fmt: (v:
 ];
 
 export default function WeeklyDash() {
+  const { meta, monthly, overview, products, sbsd, weekly, live } = useHomeData();
   const [mode, setMode] = useState<"weekly" | "monthly">("weekly");
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: "sales", dir: -1 });
   const data: Dataset = mode === "weekly" ? weekly : monthly;
@@ -147,7 +149,7 @@ export default function WeeklyDash() {
             </span>
           </div>
           <p className={d.meta}>
-            {meta.marketplace} · {meta.currency} · All products · Data through {meta.dataThrough} · Refreshed manually {meta.lastRefresh}
+            {meta.marketplace} · {meta.currency} · All products · Data through {meta.dataThrough} · {live ? `Loaded ${meta.lastRefresh}` : `Sample data, refreshed ${meta.lastRefresh}`}
           </p>
         </div>
         <div className={d['pg-ctl']}>

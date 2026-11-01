@@ -5,6 +5,7 @@ import { monthly, noAdSales, weekly, type NoSale, type Period } from "@/lib/mock
 
 export type NoSaleSet = { products: NoSale[]; campaigns: NoSale[]; keywords: NoSale[] };
 import { eur, eur2, int } from "@/lib/format";
+import { SampleTag } from "@/lib/homeData";
 import Info from "./Info";
 import Segmented from "./Segmented";
 import Select from "./Select";
@@ -52,6 +53,7 @@ export default function NoAdSales({ mode, source, scope }: { mode: "weekly" | "m
           <h2 id="ns-h" className="ph">
             Ad spend with no ad sales
           </h2>
+          <SampleTag />
           <Info label="Ad spend with no ad sales">
             <p>
               {scope ? `${scope}: ad` : "Ad"} spend above €0 with €0 tool4seller ad sales in the selected {unit}.

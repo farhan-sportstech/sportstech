@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { meta } from "@/lib/mock";
+import { useHomeData } from "@/lib/homeData";
 import st from "./Notes.module.css";
 
 const TERMS: [string, string][] = [
@@ -13,6 +13,7 @@ const TERMS: [string, string][] = [
 
 /** Full data notes, kept in a dialog so they never crowd the page. */
 export default function Notes() {
+  const { meta } = useHomeData();
   const ref = useRef<HTMLDialogElement>(null);
   return (
     <>

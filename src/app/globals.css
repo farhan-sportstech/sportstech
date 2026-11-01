@@ -658,6 +658,18 @@ html {
   color: var(--ink);
 }
 
+/* a section still on invented figures while the rest of the page is live */
+.sample-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px dashed color-mix(in srgb, var(--warn) 60%, transparent);
+  border-radius: 6px;
+  color: var(--warn);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 /* ---------- table cells used by the new sections ---------- */
 .wdp td.strong {
   font-weight: 700;

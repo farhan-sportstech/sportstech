@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { campaigns, dealPeriods, keywords, monthly, products, weekly } from "@/lib/mock";
+import { campaigns, dealPeriods, keywords, monthly as sampleMonthly, weekly as sampleWeekly } from "@/lib/mock";
+import { SampleTag, useHomeData } from "@/lib/homeData";
 import { eur, eur2, pct1, pct2, sumRows } from "@/lib/format";
 import Segmented from "./Segmented";
 import Info from "./Info";
@@ -18,6 +19,7 @@ const ALL_CATS = "All categories";
 type SortKey = "now" | "change" | "spend" | "sales";
 
 export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
+  const { weekly, monthly, products, live } = useHomeData();
   const data = mode === "weekly" ? weekly : monthly;
   const unit = mode === "weekly" ? "week" : "month";
   const options = data.periods.slice(0, -1).map((p) => `${p.kw} · ${p.label}`);
@@ -28,12 +30,15 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 } | null>(null);
   const [cat, setCat] = useState(ALL_CATS);
   const i = picked.mode === mode ? picked.i : 0;
-  const cats = useMemo(() => [ALL_CATS, ...Array.from(new Set(products.map((p) => p.category)))], []);
+  const cats = useMemo(() => [ALL_CATS, ...Array.from(new Set(products.map((p) => p.category)))], [products]);
 
   const lines = useMemo<Line[]>(() => {
-    const tot = sumRows(data.categories.map((c) => c.rows[i]));
+    // campaign and keyword lines are still sample data, so they are measured against the sample totals
+    const base = view === "products" || !live ? data : mode === "weekly" ? sampleWeekly : sampleMonthly;
+    const tot = sumRows(base.categories.map((c) => c.rows[i]));
     if (view === "products") {
-      const deal = dealPeriods[mode][i] || dealPeriods[mode][i + 1];
+      // deal weeks aren't in the database yet, so live rows carry no deal flag
+      const deal = !live && (dealPeriods[mode][i] || dealPeriods[mode][i + 1]);
       return products
         .map((p) => ({ p, a: p[mode][i], b: p[mode][i + 1] }))
         .filter(({ a, b }) => a.adSpend >= 20 && a.sales > 0 && b.sales > 0)
@@ -62,7 +67,7 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
       sales: c.adSales[i],
       salesPct: (c.adSales[i] / tot.sales) * 100,
     }));
-  }, [data, mode, i, view]);
+  }, [data, mode, i, view, products, live]);
 
   // search and category narrow both sides, so the Good / Bad counts follow the filters
   const needle = q.trim().toLowerCase();
@@ -93,6 +98,7 @@ export default function Wins({ mode }: { mode: "weekly" | "monthly" }) {
           <h2 id="wins-h" className="ph">
             Wins &amp; TACoS
           </h2>
+          {view !== "products" ? <SampleTag /> : null}
           <Info label="Wins & TACoS">
             <p>
               Parents with at least €20 ad spend in the selected {unit} and sales in both {unit}s. TACoS = ad spend ÷ total sales; change in points vs the {unit} before. Good = below 15%, Bad = 15% or higher. Spend % and Sales % are shares of the account total.

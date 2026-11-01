@@ -5,6 +5,7 @@ import { dealPeriods, lastYear, monthly, weekly, type Period, type Row } from "@
 import type { ToDate } from "@/lib/category";
 import { acos, change, eur, int, pct1, sumRows, tacos } from "@/lib/format";
 import Delta from "./Delta";
+import { SampleTag } from "@/lib/homeData";
 import Info from "./Info";
 import st from "./Comparisons.module.css";
 import Select from "./Select";
@@ -50,6 +51,7 @@ export default function Comparisons({ mode, source, toDate, scope = "Whole accou
         <h2 id="cmp-h" className="ph">
           Comparisons
         </h2>
+        <SampleTag />
         <Info label="Comparisons">
           <p>
             {scope}: the selected {unit} against the one before, the average of the 4 before that, the last {unit} of the same type, and the same {unit} last year. Green is better, red is worse; ad spend is not coloured.

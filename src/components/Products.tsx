@@ -1,7 +1,8 @@
 "use client";
 
 import { Fragment, useMemo, useRef, useState, type CSSProperties } from "react";
-import { monthly, products, weekly, type Row } from "@/lib/mock";
+import type { Row } from "@/lib/mock";
+import { useHomeData } from "@/lib/homeData";
 import { acos, change, eur, tacos } from "@/lib/format";
 import Delta from "./Delta";
 import { HOME_PRODUCT_METRICS, extend, fmtCell, type XRow } from "@/lib/metrics";
@@ -27,6 +28,7 @@ const SORTABLE: Partial<Record<string, SortKey>> = { acos: "acos", tacos: "tacos
 const LIMITS: Record<Limit, string> = { "5": "5 rows", "12": "12 rows", all: "All rows" };
 
 export default function Products({ mode, prevLabel }: { mode: "weekly" | "monthly"; prevLabel: string }) {
+  const { weekly, monthly, products } = useHomeData();
   const periods = (mode === "weekly" ? weekly : monthly).periods;
   const unit = mode === "weekly" ? "week" : "month";
   const [view, setView] = useState<View>("week");
@@ -44,7 +46,7 @@ export default function Products({ mode, prevLabel }: { mode: "weekly" | "monthl
   const weekOptions = periods.slice(0, -1).map((p) => `${p.kw} · ${p.label}`);
   useFlip(body, `${sort.key}${sort.dir}${mode}${wi}`);
 
-  const categories = useMemo(() => ["All categories", ...Array.from(new Set(products.map((p) => p.category)))], []);
+  const categories = useMemo(() => ["All categories", ...Array.from(new Set(products.map((p) => p.category)))], [products]);
 
   const all = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -53,7 +55,7 @@ export default function Products({ mode, prevLabel }: { mode: "weekly" | "monthl
       .filter((p) => (cat === "All categories" || p.category === cat) && (!needle || `${p.name} ${p.asin} ${p.category}`.toLowerCase().includes(needle)))
       .map((p) => ({ p, rows: extend(p[mode], p.asin, mode), m: metric(p[mode]) }))
       .sort((a, b) => (a.m[sort.key] - b.m[sort.key]) * sort.dir);
-  }, [q, cat, mode, sort, wi]);
+  }, [q, cat, mode, sort, wi, products]);
   const list = limit === "all" ? all : all.slice(0, Number(limit));
   const shownMetrics = METRICS.filter((m) => metrics.includes(m.key));
 
