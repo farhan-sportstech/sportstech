@@ -256,8 +256,8 @@ export default function HubTable<R extends { key: string; d?: Day; prev?: Day | 
               {shownM.map((m) => head(m.key, m.label, true))}
               {deltas ? (
                 <>
-                  {head("spendD", "Spend Δ", true, "vs prior 7 days")}
-                  {head("salesD", "Sales Δ", true, "vs prior 7 days")}
+                  {head("spendD", "Spend Δ", true, "vs week before")}
+                  {head("salesD", "Sales Δ", true, "vs week before")}
                 </>
               ) : null}
               {actions ? <th scope="col">{actionsLabel}</th> : null}

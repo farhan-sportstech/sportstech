@@ -80,7 +80,7 @@ function Head() {
             <h1>{v.title}</h1>
             {v.period !== false ? (
               <span key={period} className={d["pg-kw"]}>
-                {period === "7d" ? "7 days" : "30 days"}
+                {period === "7d" ? "Latest week" : "Month to date"}
                 <small>
                   {periodRange(period)}
                   {period === "7d" ? ` · vs ${prevRange()}` : ""}

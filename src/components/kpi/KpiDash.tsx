@@ -1,7 +1,8 @@
 "use client";
 
 import { Fragment, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
-import { KPI_CATS, kpiMonths, kpiWeeks, type KpiRow } from "@/lib/kpi";
+import { KPI_CATS, type KpiRow } from "@/lib/kpi";
+import type { KpiData } from "@/lib/data/kpi";
 import { KPI_GROUPS, KPI_METRICS, TILE_DEFAULT, metricBy, type KpiMetric } from "@/lib/kpiMetrics";
 import { change, eur, pct1 } from "@/lib/format";
 import { cx } from "@/lib/cx";
@@ -64,7 +65,8 @@ const writeRows = (keys: string[]) => {
   window.dispatchEvent(new Event(ROWS_EVT));
 };
 
-export default function KpiDash() {
+export default function KpiDash({ data }: { data: KpiData }) {
+  const { weeks: kpiWeeks, months: kpiMonths } = data;
   const [mode, setMode] = useState<Mode>("weekly");
   const [focusByMode, setFocusByMode] = useState<Record<Mode, number>>({ weekly: 1, monthly: 0 });
   const [tiles, setTiles] = useState(TILE_DEFAULT);
@@ -158,7 +160,10 @@ export default function KpiDash() {
               <p>Contribution = sales minus Amazon fees, refunds and ad spend; product costs (COGS) are not connected. The newest {unit} is partial.</p>
             </Info>
           </div>
-          <p className={d.meta}>Amazon.de · EUR · whole account · {rows.length} {unit}s of history · {f.partial ? `${f.label} is partial` : "complete period in focus"}</p>
+          <p className={d.meta}>
+            Amazon.de · EUR · whole account · {rows.length} {unit}s of history · {f.partial ? `${f.label} is partial` : "complete period in focus"} ·{" "}
+            {data.live ? `live data${data.asOf ? `, loaded ${new Date(data.asOf).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" })}` : ""}` : "sample data"}
+          </p>
         </div>
         <div className={d["pg-ctl"]}>
           <div className={st.stepper} role="group" aria-label={`Focus ${unit}`}>
@@ -267,7 +272,10 @@ export default function KpiDash() {
               <p>Spend mix per {unit}, each bar stacked to 100%. Placements cover Sponsored Products only; match type covers Sponsored Products targets. Click a bar to focus that {unit}.</p>
             </Info>
           </div>
-          <Segmented label="Breakdown" size="sm" value={breakdown} onChange={setBreakdown} options={Object.entries(BREAKDOWNS).map(([value, b]) => ({ value, label: b.label }))} />
+          <Segmented label="Breakdown" size="sm" value={breakdown} onChange={setBreakdown} options={Object.entries(BREAKDOWNS)
+              // a breakdown the data has no figures for (SP placements from the database, for now) isn't offered
+              .filter(([, b]) => rows.some((r) => b.keys.some((k) => (metricBy(k).get(r) ?? 0) > 0)))
+              .map(([value, b]) => ({ value, label: b.label }))} />
         </div>
         <div className={st.split2}>
           <StackBars key={`${mode}${breakdown}`} H={340} rows={rows} series={bdSeries} focus={focus} onFocus={setFocus} fmt={(v) => eur.format(v)} percent label={`${bd.label} spend mix per period`} />

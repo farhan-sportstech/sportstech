@@ -29,7 +29,13 @@ export default function SearchTerms() {
       <HubTable
         id="search-terms"
         title="All search terms"
-        info={<p>What shoppers searched before clicking an ad, and the keyword or target that caught it. The 7-day view scales the 30-day search-term report by each campaign&apos;s 7-day share of spend.</p>}
+        info={
+          <>
+            <p>What shoppers searched before clicking an ad, and the keyword or target that caught it.</p>
+            <p>The search-term report holds the top 6.000 terms by spend, so smaller terms aren&apos;t listed.</p>
+          </>
+        }
+        lead="top 6.000 by spend"
         rows={rows}
         cols={cols}
         tabs={[

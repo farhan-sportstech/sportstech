@@ -6,11 +6,19 @@ import { kpiWeeks } from "./kpi";
 import { TERMS } from "./ads";
 
 export type Period = "7d" | "30d";
+// the two periods the database serves the hub: the latest full week (with the week before) and month to date
 export const PERIODS: { value: Period; label: string }[] = [
-  { value: "7d", label: "Last 7 days" },
-  { value: "30d", label: "Last 30 days" },
+  { value: "7d", label: "Latest week" },
+  { value: "30d", label: "Month to date" },
 ];
 export const periodRange = (p: Period) => `${DAYS[p === "7d" ? 6 : 29].label} – ${DAYS[0].label}`;
+/** database placement names → the short labels the app shows */
+export const PLACEMENT_LABEL: Record<string, string> = {
+  "Top of Search on-Amazon": "Top of search",
+  "Detail Page on-Amazon": "Product pages",
+  "Other on-Amazon": "Rest of search",
+  "Off Amazon": "Off Amazon",
+};
 export const prevRange = () => `${DAYS[13].label} – ${DAYS[7].label}`;
 
 export type Base = { key: string; pf: string; campaignId: string; campaign: string; adGroup: string; type: AdType; d: Day; prev: Day | null };
@@ -215,11 +223,13 @@ export const trendWeeks: TrendWeek[] = kpiWeeks
 /* ---------- SQP: weekly search query performance, account brand view ---------- */
 export type SqpCell = { vol: number; impr: number; oImpr: number; clicks: number; oClicks: number; purch: number; oPurch: number };
 export type SqpQuery = { q: string; cat: string; weeks: SqpCell[] };
+// SQP weeks run Sunday to Saturday, so they don't line up with ISO (Monday) KPI weeks: label them by their Sunday
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 export const SQP_WEEKS = Array.from({ length: 26 }, (_, i) => {
-  const end = new Date(Date.UTC(2026, 9, 25) - i * 7 * 864e5);
+  const end = new Date(Date.UTC(2026, 9, 24) - i * 7 * 864e5);
   const start = new Date(end.getTime() - 6 * 864e5);
-  const f = (d: Date) => `${d.getUTCDate()}.${d.getUTCMonth() + 1}.`;
-  return { label: `KW ${43 - i}`, range: `${f(start)}–${f(end)}`, month: end.toISOString().slice(0, 7) };
+  const f = (d: Date) => `${d.getUTCDate()} ${MON[d.getUTCMonth()]}`;
+  return { label: `Wk of ${f(start)}`, range: `Sun ${f(start)} – Sat ${f(end)}`, month: end.toISOString().slice(0, 7) };
 }).reverse();
 export const sqpQueries: SqpQuery[] = (() => {
   const rnd = rng(523);

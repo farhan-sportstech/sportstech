@@ -20,7 +20,8 @@ export type Campaign = {
   /** index 0 = the newest day (DAYS[0]) */
   days: Day[];
 };
-export type Match = "Exact" | "Phrase" | "Broad" | "Auto" | "PAT";
+// Category and Theme come from the hub_target report alongside the classic match types
+export type Match = "Exact" | "Phrase" | "Broad" | "Auto" | "PAT" | "Category" | "Theme";
 /** t = 30 days, w = the newest 7 days, p = the 7 days before those */
 export type Target = { id: string; campaignId: string; campaign: string; adGroup: string; text: string; match: Match; bid: number; state: State; t: Day; w: Day; p: Day };
 export type Term = { id: string; campaignId: string; campaign: string; adGroup: string; target: string; match: Match; term: string; t: Day };

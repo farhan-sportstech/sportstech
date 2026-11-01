@@ -8,6 +8,7 @@ import s from "./Sidebar.module.css";
 import { cx } from "@/lib/cx";
 import { NAV, NAV_TITLE, isGroup, isHeading, type NavGroup, type NavLeaf } from "@/lib/nav";
 import { useQueue } from "@/lib/queue";
+import { meta } from "@/lib/mock";
 
 const pathOf = (href: string) => href.split("#")[0];
 const norm = (p: string) => (p.endsWith("/") ? p : p + "/");
@@ -90,7 +91,9 @@ export default function Sidebar() {
         <div className={s.hd}>
           <div className={s.tx}>
             <div className={s.t}>{NAV_TITLE}</div>
-            <div className={s.st}>Amazon.de</div>
+            <div className={s.st} title={`Last complete refresh: ${meta.lastRefresh}`}>
+              Amazon.de · {meta.lastRefresh.replace(/ \d{4}$/, "")}
+            </div>
           </div>
           <button type="button" id="wd-tg" className={s.tg} onClick={() => setMini((m) => !m)} aria-expanded={!mini} aria-label={mini ? "Expand sidebar" : "Collapse sidebar"} title={mini ? "Expand sidebar" : "Collapse sidebar"}>
             <Icon name="col" />

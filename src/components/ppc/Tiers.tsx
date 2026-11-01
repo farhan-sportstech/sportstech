@@ -12,21 +12,25 @@ import d from "../dash.module.css";
 import st from "./ppc.module.css";
 
 // lower bound inclusive; the last ACOS row holds entities that spent without any sale
+// the bands the database builds ppc_tier with
 const ACOS_T = [
-  { label: "<10%", lo: 0 },
+  { label: "0–10%", lo: 0 },
   { label: "10–20%", lo: 10 },
   { label: "20–30%", lo: 20 },
-  { label: "30–50%", lo: 30 },
-  { label: "50–100%", lo: 50 },
-  { label: "≥100%", lo: 100 },
+  { label: "30–40%", lo: 30 },
+  { label: "40–50%", lo: 40 },
+  { label: "50–75%", lo: 50 },
+  { label: "75–100%", lo: 75 },
+  { label: ">100%", lo: 100 },
 ];
 const CPC_T = [
-  { label: "<0,40", lo: 0 },
-  { label: "0,40–0,70", lo: 0.4 },
-  { label: "0,70–1,00", lo: 0.7 },
+  { label: "<0,10", lo: 0 },
+  { label: "0,10–0,25", lo: 0.1 },
+  { label: "0,25–0,50", lo: 0.25 },
+  { label: "0,50–1,00", lo: 0.5 },
   { label: "1,00–1,50", lo: 1 },
-  { label: "1,50–2,50", lo: 1.5 },
-  { label: "≥2,50", lo: 2.5 },
+  { label: "1,50–2,00", lo: 1.5 },
+  { label: ">2,00", lo: 2 },
 ];
 const NO_SALES = ACOS_T.length;
 const tierOf = (tiers: { lo: number }[], v: number) => tiers.reduce((k, t, i) => (v >= t.lo ? i : k), 0);
@@ -74,7 +78,7 @@ export default function Tiers() {
   const picked = pick ? grid[pick.a][pick.c] : null;
   const pickedRows = picked ? [...picked.ents].sort((a, b) => b.t.spend - a.t.spend) : [];
   // the share of spend that sits in the expensive corner: ACOS 50%+ or no sales
-  const risky = grid.slice(4).flat().reduce((s, c) => s + c.spend, 0);
+  const risky = grid.slice(5).flat().reduce((s, c) => s + c.spend, 0);
   const typeLabel = type === "all" ? "All" : type;
 
   return (

@@ -10,8 +10,8 @@ export type KpiRow = {
   sales: number;
   orders: number;
   units: number;
-  sessions: number;
-  pageViews: number;
+  sessions: number | null; // Business Reports lag a few days, so the newest period can have none yet
+  pageViews: number | null;
   adSales: number; // PPC: SP + SB + SD attributed, 14 days
   adSpend: number;
   impressions: number;
@@ -38,8 +38,9 @@ export type KpiRow = {
   cats: Record<string, number>; // product sales per category
 };
 
-export const KPI_CATS = ["Treadmills", "Exercise bikes", "Vibration plates", "Cross trainers", "Rowing machines", "Strength stations", "Benches & weights", "Small equipment", "Hoverboards & scooters", "Trampolines"];
-const SHARE = [0.52, 0.12, 0.08, 0.06, 0.07, 0.05, 0.04, 0.03, 0.02, 0.01];
+// the category names kpi_category_week uses
+export const KPI_CATS = ["Treadmills", "Exercise bikes", "Vibration plates", "Cross trainers", "Rowing machines", "Strength stations", "Benches & weights", "Small equipment & accessories", "Hoverboards & scooters", "Trampolines", "Other"];
+const SHARE = [0.52, 0.12, 0.08, 0.06, 0.07, 0.05, 0.04, 0.03, 0.02, 0.01, 0.01];
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const day = (d: Date) => `${d.getUTCDate()} ${MON[d.getUTCMonth()]}`;
 

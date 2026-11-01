@@ -10,8 +10,8 @@ export type HeatCell = [number, number, number];
 // orders per hour across a day: a quiet night, a morning climb, a lunch bump and the evening peak
 const HOUR = [0.18, 0.1, 0.06, 0.04, 0.04, 0.07, 0.17, 0.36, 0.55, 0.68, 0.74, 0.8, 0.86, 0.78, 0.74, 0.76, 0.82, 0.92, 1.0, 1.12, 1.2, 1.1, 0.82, 0.45];
 const DAY = [1.02, 0.97, 0.95, 0.94, 0.86, 0.92, 1.24];
-const SHARE: Record<string, number> = { Treadmills: 0.5, "Exercise bikes": 0.13, "Vibration plates": 0.09, "Cross trainers": 0.06, "Rowing machines": 0.05, "Strength stations": 0.04, "Benches & weights": 0.05, "Small equipment": 0.05, "Hoverboards & scooters": 0.02, Trampolines: 0.01 };
-const PRICE: Record<string, number> = { Treadmills: 420, "Exercise bikes": 330, "Vibration plates": 190, "Cross trainers": 380, "Rowing machines": 360, "Strength stations": 690, "Benches & weights": 140, "Small equipment": 32, "Hoverboards & scooters": 230, Trampolines: 120 };
+const SHARE: Record<string, number> = { Treadmills: 0.5, "Exercise bikes": 0.13, "Vibration plates": 0.09, "Cross trainers": 0.06, "Rowing machines": 0.05, "Strength stations": 0.04, "Benches & weights": 0.05, "Small equipment & accessories": 0.05, "Hoverboards & scooters": 0.02, Trampolines: 0.01, Other: 0.01 };
+const PRICE: Record<string, number> = { Treadmills: 420, "Exercise bikes": 330, "Vibration plates": 190, "Cross trainers": 380, "Rowing machines": 360, "Strength stations": 690, "Benches & weights": 140, "Small equipment & accessories": 32, "Hoverboards & scooters": 230, Trampolines: 120, Other: 60 };
 
 export const HEAT: Record<string, HeatCell[][]> = (() => {
   const rnd = rng(1207);
@@ -21,7 +21,7 @@ export const HEAT: Record<string, HeatCell[][]> = (() => {
   const norm = DAY.reduce((a, d) => a + d, 0) * HOUR.reduce((a, h) => a + h, 0);
   for (const cat of KPI_CATS) {
     // evening-heavy for home fitness, a touch earlier for small equipment
-    const shift = cat === "Small equipment" ? -2 : cat === "Treadmills" ? 0 : rnd() < 0.5 ? 1 : 0;
+    const shift = cat === "Small equipment & accessories" ? -2 : cat === "Treadmills" ? 0 : rnd() < 0.5 ? 1 : 0;
     out[cat] = WEEKDAYS.map((_, d) =>
       HOUR.map((_, h) => {
         const hw = HOUR[(h - shift + 24) % 24];

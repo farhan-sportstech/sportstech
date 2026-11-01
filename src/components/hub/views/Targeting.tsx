@@ -10,7 +10,7 @@ import HubTable, { View, type Col } from "../HubTable";
 import QueueButton from "../QueueButton";
 import { StateTag, useBaseCols } from "../cells";
 
-const MATCHES = ["Exact", "Phrase", "Broad", "Auto", "PAT"] as const;
+const MATCHES = ["Exact", "Phrase", "Broad", "Auto", "PAT", "Category", "Theme"] as const;
 
 export default function Targeting() {
   const hub = useHub();
@@ -35,11 +35,11 @@ export default function Targeting() {
       <HubTable
         id="targeting"
         title="Targeting"
-        info={<p>Keywords, auto targets and product targets with their current bids. Spend Δ and Sales Δ compare the last 7 days with the 7 before.</p>}
+        info={<p>Keywords, auto targets and product targets with their current bids. Spend Δ and Sales Δ compare the latest week with the week before.</p>}
         rows={rows}
         cols={cols}
         deltas={hub.period === "7d"}
-        tabs={[{ label: "All", test: () => true }, ...MATCHES.map((m) => ({ label: m === "PAT" ? "Product" : m, test: (r: TgtRow) => r.match === m }))]}
+        tabs={[{ label: "All", test: () => true }, ...MATCHES.filter((m) => all.some((r) => r.match === m)).map((m) => ({ label: m === "PAT" ? "Product" : m, test: (r: TgtRow) => r.match === m }))]}
         chips={[
           { label: "Enabled", test: (r) => r.state === "ENABLED" },
           { label: "Paused", test: (r) => r.state === "PAUSED" },

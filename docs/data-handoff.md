@@ -180,3 +180,36 @@ One view per page area, current generation only, dates included, presentation co
 - Placement names follow the database (`Top of Search on-Amazon`, `Detail Page on-Amazon`, `Other on-Amazon`, `Off Amazon`), shown as short labels.
 - Match types add `Category` and `Theme`.
 - A server-side data layer (`src/lib/data/*`) replaces the sample files one page at a time, starting with the Weekly Dash. Each page keeps working on sample data until its source is ready.
+
+---
+
+## 7. Decisions after Grok's answers (1 Nov 2026)
+
+- **Spike alerts stays per campaign.** The loader already fetches 63 days of daily per-campaign figures (`raw/hub/daily.json`). It should store them as base numbers; the page works out ACOS and the budget-capped flag.
+- **Read access:** the app reads with the service-role key in a server-only env var (`SUPABASE_SERVICE_ROLE_KEY` in `.env.local`, never committed) until the read-only role and `api` views exist.
+- **Base numbers only:** the loader stores amounts (spend, sales, fees, refunds, clicks…); the app computes every ratio. Monthly figures are summed from days, not weeks.
+- **Write-back queue** moves to `dash_changes` (status column) later; the app builds the routes; `WRITEBACK_ENABLED` stays off.
+- **Codes** read as `std` = defense, `sto` = offense, `mtt` = product targeting until `kpi_rebuild.py` confirms. Category / Theme targeting goes to whichever of `mtt` / `mta` the loader uses.
+- **SQP weeks** are shown Sunday to Saturday ("Wk of 18 Oct") and not matched 1:1 to ISO KPI weeks.
+- **"Data as of"** = `finished_at` of the last `sb/load.py` run with status ok. Nothing is presented as verified while `verify_ok` is null.
+- **Search terms** say "top 6.000 by spend"; the cap is ours (`hub_fetch.py`) and can be raised.
+
+## 8. Status
+
+Done in the app:
+- Hub period switch is now "Latest week / Month to date"; deltas read "vs week before".
+- Tier bands, placement labels (`PLACEMENT_LABEL`), match types (Category, Theme) follow the database.
+- KPI categories use the database names (incl. "Small equipment & accessories", "Other").
+- Server data layer `src/lib/data/` (`supabase.ts`, `kpi.ts`). **Weekly KPIs reads `kpi_weekly`, `kpi_monthly`, `kpi_category_week` and `refresh_runs`** once the key is set; without it, sample data, and the page says which.
+
+Not done (database):
+- Revoking the public roles' default grants (section 4 risk). Checked safe (all 103 tables have RLS, 0 policies; the 3 views are `security_invoker`), but database migrations are blocked by this machine's Claude Code permissions. SQL ready to run:
+  ```sql
+  revoke all on all tables in schema public from anon, authenticated;
+  revoke all on all sequences in schema public from anon, authenticated;
+  alter default privileges for role postgres in schema public revoke all on tables from anon, authenticated;
+  alter default privileges for role postgres in schema public revoke all on sequences from anon, authenticated;
+  ```
+- `api` schema views and the read-only role: same blocker.
+
+Waiting on the loader (code at `/workspace/t4s` on Grok's machine): items 4.2–4.6, daily per-campaign table, fee/refund amounts, empty-source protection, row_type flag for totals.

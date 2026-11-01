@@ -15,7 +15,7 @@ export type KpiMetric = {
   key_?: boolean; // part of the "Key metrics" view
 };
 
-const r = (a: number, b: number) => (b ? (a / b) * 100 : null);
+const r = (a: number, b: number | null) => (b ? (a / b) * 100 : null);
 const e = (v: number) => eur.format(v);
 const e2 = (v: number) => eur2.format(v);
 const n = (v: number) => int.format(v);
